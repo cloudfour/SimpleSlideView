@@ -1,4 +1,4 @@
 $ = jQuery
-slideView = $.SimpleSlideView ".views", ".view"
+slideView = $.SimpleSlideView()
 slideView.on()
 

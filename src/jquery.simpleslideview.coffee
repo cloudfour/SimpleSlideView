@@ -1,15 +1,23 @@
-$.SimpleSlideView = (container, views, active) ->
-  $container = $(container)
-  $views = $(views, $container)
-  $active = if active then $(active) else $views.first()
+$.SimpleSlideView = (options) ->
+  settings =
+    container: ".views"
+    views: ".view"
+    active: false
+    duration: 500
+  settings = $.extend settings, options
+
+  $container = $(settings.container)
+  $views = $(settings.views, $container)
+  $active = if settings.active then $(active) else $views.first()
+
   isActive = false
   cssSupport = (Modernizr? and Modernizr.csstransforms and Modernizr.csstransitions)
   transEndEventNames =
-    'WebkitTransition' : 'webkitTransitionEnd',
-    'MozTransition'    : 'transitionend',
-    'OTransition'      : 'oTransitionEnd otransitionend',
-    'msTransition'     : 'MSTransitionEnd',
-    'transition'       : 'transitionend'
+    'WebkitTransition': 'webkitTransitionEnd'
+    'MozTransition': 'transitionend'
+    'OTransition': 'oTransitionEnd otransitionend'
+    'msTransition': 'MSTransitionEnd'
+    'transition': 'transitionend'
   if cssSupport
     transformPrefix = Modernizr.prefixed('transform').replace(/([A-Z])/g, (str,m1) -> return '-' + m1.toLowerCase()).replace(/^ms-/,'-ms-')
     transEndEventName = transEndEventNames[Modernizr.prefixed 'transition']
@@ -32,11 +40,16 @@ $.SimpleSlideView = (container, views, active) ->
       distance = if push then containerWidth * -1 else containerWidth
       $target.show 0, () ->
         $active.css
-          transition: transformPrefix + " " + "500ms ease"
+          transition: transformPrefix + " " + settings.duration + "ms ease"
           transform: "translateX(" + distance + "px)"
         $target.css
-          transition: transformPrefix + " " + "500ms ease"
+          transition: transformPrefix + " " + settings.duration + "ms ease"
           transform: "translateX(" + distance + "px)"
+        $container.css
+          transition: "height " + settings.duration + "ms linear"
+          height: $target.outerHeight() + "px"
+        if $(window).scrollTop() > $container.position().top
+          $.scrollTo $container, settings.duration
       .css
         left: if push then containerWidth else containerWidth * -1
         position: "absolute"
@@ -46,16 +59,6 @@ $.SimpleSlideView = (container, views, active) ->
         $target.attr "style", ""
         $active.attr("style", "").hide()
         $(window).off transEndEventName
-        $container.animate
-          height: $target.outerHeight()
-          () ->
-            $(@).css
-              height: ""
-              overflow: ""
-              position: ""
-              width: ""
-        if $(window).scrollTop() > $container.position().top
-          $.scrollTo $container, 200
         $active = $target
 
     animateJS: ($target, push, containerWidth) ->
@@ -77,29 +80,23 @@ $.SimpleSlideView = (container, views, active) ->
         left: 0
         () ->
           $(@).attr("style", "")
-      $container.animate
-        height: $target.outerHeight()
-        () ->
-          $(@).css
-            height: ""
-            overflow: ""
-            position: ""
-            width: ""
+      $container.animate height: $target.outerHeight()
       if $(window).scrollTop() > $container.position().top
-        $.scrollTo $container, 200
+        $.scrollTo $container, settings.duration
       $active = $target
-
 
     on: () ->
       if isActive then return
       isActive = true
       $views.not($active).css "display", "none"
-      $container.on "click", "[data-pushview]", (event) ->
+      $container.on "touchstart mousedown", "[data-pushview]", (event) ->
         event.preventDefault()
         actions.pushView $(@).data("pushview")
-      .on "click", "[data-popview]", (event) ->
+      .on "touchstart mousedown", "[data-popview]", (event) ->
         event.preventDefault()
         actions.popView $(@).data("popview")
+      .on "click", "[data-pushview]", (e) -> e.preventDefault()
+      .on "click", "[data-popview]", (e) -> e.preventDefault()
     
     off: () ->
       unless isActive then return
@@ -115,8 +112,8 @@ $.SimpleSlideView = (container, views, active) ->
         position: ""
         top: ""
         width: ""
-      $container.off "click", "[data-pushview]"
-      $container.off "click", "[data-popview]"
+      $container.off "touchstart mousedown click", "[data-pushview]"
+      $container.off "touchstart mousedown click", "[data-popview]"
       $views.css "display", ""
 
     pushView: (target) ->
@@ -130,3 +127,4 @@ $.SimpleSlideView = (container, views, active) ->
   off: actions.off
   pushView: actions.pushView
   popView: actions.popView
+
