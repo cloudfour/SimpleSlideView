@@ -74,7 +74,14 @@
 <script src="../vendor/jquery.min.js"></script>
 <script src="../vendor/jquery.scrollTo.min.js"></script>
 <script src="../lib/jquery.simpleslideview.js"></script>
-<script src="../lib/main.js"></script>
+<script>
+  (function() {
+    var $, slideView;
+    $ = jQuery;
+    slideView = $.SimpleSlideView();
+    slideView.on();
+  }).call(this);
+</script>
 
 </body>
 </html>
