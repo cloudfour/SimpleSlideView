@@ -1,3 +1,4 @@
+$ = jQuery
 $.SimpleSlideView = (options) ->
   settings =
     container: ".views"
