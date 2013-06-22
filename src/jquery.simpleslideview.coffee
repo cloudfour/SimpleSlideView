@@ -3,18 +3,62 @@ $.SimpleSlideView = (container, views, active) ->
   $views = $(views, $container)
   $active = if active then $(active) else $views.first()
   isActive = false
+  cssSupport = (Modernizr? and Modernizr.csstransforms and Modernizr.csstransitions)
+  transEndEventNames =
+    'WebkitTransition' : 'webkitTransitionEnd',
+    'MozTransition'    : 'transitionend',
+    'OTransition'      : 'oTransitionEnd otransitionend',
+    'msTransition'     : 'MSTransitionEnd',
+    'transition'       : 'transitionend'
+  if cssSupport
+    transformPrefix = Modernizr.prefixed('transform').replace(/([A-Z])/g, (str,m1) -> return '-' + m1.toLowerCase()).replace(/^ms-/,'-ms-')
+    transEndEventName = transEndEventNames[Modernizr.prefixed 'transition']
 
   actions = {
     slideView: (target, push) ->
       $target = $(target)
       containerWidth = $container.width()
-
       $container.css
         height: $container.outerHeight()
         overflow: "hidden"
         position: "relative"
         width: "100%"
+      if cssSupport
+        actions.animateCSS $target, push, containerWidth
+      else
+        actions.animateJS $target, push, containerWidth
 
+    animateCSS: ($target, push, containerWidth) ->
+      distance = if push then containerWidth * -1 else containerWidth
+      $target.show 0, () ->
+        $active.css
+          transition: transformPrefix + " " + "500ms ease"
+          transform: "translateX(" + distance + "px)"
+        $target.css
+          transition: transformPrefix + " " + "500ms ease"
+          transform: "translateX(" + distance + "px)"
+      .css
+        left: if push then containerWidth else containerWidth * -1
+        position: "absolute"
+        top: 0
+        width: containerWidth
+      $(window).on transEndEventName, () ->
+        $target.attr "style", ""
+        $active.attr("style", "").hide()
+        $(window).off transEndEventName
+        $container.animate
+          height: $target.outerHeight()
+          () ->
+            $(@).css
+              height: ""
+              overflow: ""
+              position: ""
+              width: ""
+        if $(window).scrollTop() > $container.position().top
+          $.scrollTo $container, 200
+        $active = $target
+
+    animateJS: ($target, push, containerWidth) ->
       $active.css
         left: 0
         position: "absolute"
@@ -44,6 +88,7 @@ $.SimpleSlideView = (container, views, active) ->
       if $(window).scrollTop() > $container.position().top
         $.scrollTo $container, 200
       $active = $target
+
 
     on: () ->
       if isActive then return
