@@ -39,6 +39,8 @@ $.SimpleSlideView = (options) ->
 
     animateCSS: ($target, push, containerWidth) ->
       distance = if push then containerWidth * -1 else containerWidth
+      if $(window).scrollTop() > $container.position().top
+        $.scrollTo $container, 100
       $target.show 0, () ->
         $active.css
           transition: transformPrefix + " " + settings.duration + "ms ease"
@@ -46,17 +48,15 @@ $.SimpleSlideView = (options) ->
         $target.css
           transition: transformPrefix + " " + settings.duration + "ms ease"
           transform: "translateX(" + distance + "px)"
-        $container.css
-          transition: "height " + settings.duration + "ms linear"
-          height: $target.outerHeight() + "px"
-        if $(window).scrollTop() > $container.position().top
-          $.scrollTo $container, settings.duration
       .css
         left: if push then containerWidth else containerWidth * -1
         position: "absolute"
         top: 0
         width: containerWidth
       $(window).on transEndEventName, () ->
+        $container.css
+          transition: "height 150ms linear"
+          height: $target.outerHeight() + "px"
         $target.attr "style", ""
         $active.attr("style", "").hide()
         $(window).off transEndEventName
