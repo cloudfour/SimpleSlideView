@@ -92,12 +92,12 @@ $.SimpleSlideView = (options) ->
       $views.not($active).css "display", "none"
       $container.on "touchstart mousedown", "[data-pushview]", (event) ->
         event.preventDefault()
-        actions.pushView $(@).data("pushview")
-      .on "touchstart mousedown", "[data-popview]", (event) ->
+        actions.pushView $(@).data "pushview"
+      $container.on "touchstart mousedown", "[data-popview]", (event) ->
         event.preventDefault()
         actions.popView $(@).data("popview")
-      .on "click", "[data-pushview]", (e) -> e.preventDefault()
-      .on "click", "[data-popview]", (e) -> e.preventDefault()
+      $container.on "click", "[data-pushview]", (e) -> e.preventDefault()
+      $container.on "click", "[data-popview]", (e) -> e.preventDefault()
     
     off: () ->
       unless isActive then return
