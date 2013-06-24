@@ -1,10 +1,10 @@
 $ = jQuery
-$.SimpleSlideView = (options) ->
+$.fn.simpleSlideView = (views, options) ->
   settings =
-    container: ".views"
-    views: ".view"
+    views: "> div"
     active: false
     duration: 500
+  options = $.extend options, { container: @, views: views }
   settings = $.extend settings, options
 
   $container = $(settings.container)
