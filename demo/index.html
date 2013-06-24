@@ -71,6 +71,7 @@
 </div>
 
 <script src="../vendor/modernizr.custom.js"></script>
+<script src="../vendor/fastclick.js"></script>
 <script src="../vendor/jquery.min.js"></script>
 <script src="../vendor/jquery.scrollTo.min.js"></script>
 <script src="../lib/jquery.simpleslideview.js"></script>
@@ -78,6 +79,7 @@
   (function() {
     var $, slideView;
     $ = jQuery;
+    FastClick.attach(document.body);
     slideView = $.SimpleSlideView();
     slideView.on();
   }).call(this);
