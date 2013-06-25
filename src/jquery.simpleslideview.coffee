@@ -39,13 +39,16 @@ $.fn.simpleSlideView = (views, options) ->
 
     animateCSS: ($target, push, containerWidth) ->
       distance = if push then containerWidth * -1 else containerWidth
-      if $(window).scrollTop() > $container.position().top
-        $.scrollTo $container, 100
       $target.show 0, () ->
+        $container.css "-webkit-backface": "hidden"
+        if $(window).scrollTop() > $container.position().top
+          $.scrollTo $container, 100
         $active.css
+          "-webkit-backface": "hidden"
           transition: transformPrefix + " " + settings.duration + "ms ease"
           transform: "translateX(" + distance + "px)"
         $target.css
+          "-webkit-backface": "hidden"
           transition: transformPrefix + " " + settings.duration + "ms ease"
           transform: "translateX(" + distance + "px)"
       .css
@@ -55,7 +58,7 @@ $.fn.simpleSlideView = (views, options) ->
         width: containerWidth
       $(window).on transEndEventName, () ->
         $container.css
-          transition: "height 150ms linear"
+          transition: "height 100ms linear"
           height: $target.outerHeight() + "px"
         $target.attr "style", ""
         $active.attr("style", "").hide()
