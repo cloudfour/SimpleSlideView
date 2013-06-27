@@ -1,6 +1,4 @@
-# compatible with jQuery or Zepto
-$ = if jQuery? then jQuery else Zepto
-isZepto = Zepto? and $ is Zepto
+$ = jQuery
 
 # helper to attach to window method
 $window = $(window)
@@ -17,7 +15,7 @@ defaults =
   dataAttr:
     push: 'pushview'
     pop: 'popview'
-  scrollToPlugin: $.fn.scrollTo?
+  # scrollToPlugin: $.fn.scrollTo?
 
 # helpers for new or experimental CSS features
 prefix = ''
@@ -48,13 +46,6 @@ resetStyles = (el, styles) ->
     reset[style] = ''
   $el.css reset
 
-# helpers for getting best dimension methods available
-outerDimension = (el, dim) ->
-  outerDim = dim[0].toUpperCase() + dim.slice(1)
-  return $(el)[if $.fn[outerDim]? then outerDim else dim]()
-outerHeight = (el) -> return outerDimension(el, 'height')
-outerWidth = (el) -> return outerDimension(el, 'width')
-
 # the main plugin class, will get instantiated from $.fn.simpleSlideView
 class SimpleSlideView
   constructor: (@element, options) ->
@@ -82,9 +73,9 @@ class SimpleSlideView
 
   slideView: (targetView, push) ->
     $targetView = $ targetView
-    containerWidth = outerWidth(@$container)
+    containerWidth = @$container.outerWidth()
     @$container.css
-      height: outerHeight(@$container)
+      height: @$container.outerHeight()
       overflow: 'hidden'
       position: 'relative'
       width: '100%'
@@ -109,9 +100,9 @@ class SimpleSlideView
       @options.duration
       @options.jsEasing
       () -> resetStyles @, ['left', 'position', 'top', 'width']
-    @$container.animate height: outerHeight($targetView), () =>
+    @$container.animate height: $targetView.outerHeight(), () =>
       resetStyles @$container, ['height', 'overflow', 'position', 'width']
-    @scrollToTop()
+    # @scrollToTop()
     @$activeView = $targetView
 
   animateCSS: ($targetView, push, containerWidth) ->
@@ -133,8 +124,8 @@ class SimpleSlideView
         @$activeView.hide()
         @$activeView = $targetView
         @$container.css transition, 'height ' + (@options.duration / 2) + 'ms ' + @options.cssEasing
-        @$container.css 'height', outerHeight($targetView)
-        @scrollToTop()
+        @$container.css 'height', $targetView.outerHeight()
+        # @scrollToTop()
       else if event.target is @$container[0]
         resetStyles @$container, [
           'height'
@@ -152,11 +143,11 @@ class SimpleSlideView
       @$activeView.css transform, 'translateX(' + distance + 'px)'
       $targetView.css transform, 'translateX(' + 0 + 'px)'
 
-  scrollToTop: () ->
-    if @options.scrollToPlugin?
-      containerTop = @$container.position().top
-      if $window.scrollTop() > containerTop
-        $.scrollTo containerTop, @options.duration
+  # scrollToTop: () ->
+  #   if @options.scrollToPlugin?
+  #     containerTop = @$container.position().top
+  #     if $window.scrollTop() > containerTop
+  #       $.scrollTo containerTop, @options.duration
 
   pushView: (targetView) ->
     @slideView targetView, true
