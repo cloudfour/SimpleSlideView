@@ -52,7 +52,7 @@ class SimpleSlideView
     @animate = if @options.cssSupport then @animateCSS else @animateJS
     @options.easing = @options.cssEasing if @options.cssSupport and @options.cssEasing
     @options.easing = @options.jsEasing if @options.jsEasing unless @options.cssSupport
-    @options.easing = 'linear' if @options.cssSupport unless @options.easing
+    @options.easing = 'linear' if @options.cssSupport unless @options.easing?
 
   on: () ->
     @$views.not(@$activeView).hide()
