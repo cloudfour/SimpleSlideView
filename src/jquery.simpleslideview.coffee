@@ -58,17 +58,17 @@ class SimpleSlideView
     @animate = if @options.cssSupport then @animateCSS else @animateJS
 
   on: () ->
-    @$views.not(@$activeView).hide()
+    @$views.not(@$activeView).css 'display', 'none'
     if @options.dataAttrEvent?
       @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']', (event) =>
         event.preventDefault()
-        @pushView $(event.target).data @options.dataAttr.push
+        @pushView $(event.currentTarget).data @options.dataAttr.push
       @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']', (event) =>
         event.preventDefault()
-        @popView $(event.target).data @options.dataAttr.pop
+        @popView $(event.currentTarget).data @options.dataAttr.pop
 
   off: () ->
-    @$views.show()
+    @$views.css 'display', ''
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
