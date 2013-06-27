@@ -6,7 +6,7 @@ $window = $(window)
 # default settings
 defaults =
   views: '> div'
-  # activeView: null
+  activeView: null
   cssSupport: Modernizr? and Modernizr.csstransforms and Modernizr.csstransitions
   duration: $.fx.speeds._default
   jsEasing: 'swing'
@@ -15,7 +15,9 @@ defaults =
   dataAttr:
     push: 'pushview'
     pop: 'popview'
-  # scrollToPlugin: $.fn.scrollTo?
+  eventNames:
+    viewChangeStart: 'viewChangeStart'
+    viewChangeEnd: 'viewChangeEnd'
 
 # helpers for new or experimental CSS features
 prefix = ''
@@ -72,6 +74,7 @@ class SimpleSlideView
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
 
   slideView: (targetView, push) ->
+    @$container.trigger @options.eventNames.viewChangeStart
     $targetView = $ targetView
     containerWidth = @$container.outerWidth()
     @$container.css
@@ -102,7 +105,7 @@ class SimpleSlideView
       () -> resetStyles @, ['left', 'position', 'top', 'width']
     @$container.animate height: $targetView.outerHeight(), () =>
       resetStyles @$container, ['height', 'overflow', 'position', 'width']
-    # @scrollToTop()
+      @$container.trigger @options.eventNames.viewChangeEnd
     @$activeView = $targetView
 
   animateCSS: ($targetView, push, containerWidth) ->
@@ -125,7 +128,6 @@ class SimpleSlideView
         @$activeView = $targetView
         @$container.css transition, 'height ' + (@options.duration / 2) + 'ms ' + @options.cssEasing
         @$container.css 'height', $targetView.outerHeight()
-        # @scrollToTop()
       else if event.target is @$container[0]
         resetStyles @$container, [
           'height'
@@ -136,6 +138,7 @@ class SimpleSlideView
           transition
         ]
         $window.off transitionEnd
+        @$container.trigger @options.eventNames.viewChangeEnd
       else return
 
     $targetView.css(transform, 'translateX(' + (distance * -1) + 'px)').show 0, () =>
@@ -143,17 +146,9 @@ class SimpleSlideView
       @$activeView.css transform, 'translateX(' + distance + 'px)'
       $targetView.css transform, 'translateX(' + 0 + 'px)'
 
-  # scrollToTop: () ->
-  #   if @options.scrollToPlugin?
-  #     containerTop = @$container.position().top
-  #     if $window.scrollTop() > containerTop
-  #       $.scrollTo containerTop, @options.duration
+  pushView: (targetView) -> @slideView targetView, true
 
-  pushView: (targetView) ->
-    @slideView targetView, true
-
-  popView: (targetView) ->
-    @slideView targetView
+  popView: (targetView) -> @slideView targetView
 
 
 $.fn.simpleSlideView = (options = {}, args...) ->

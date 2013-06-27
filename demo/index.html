@@ -81,8 +81,15 @@
 <script src="../lib/jquery.simpleslideview.js"></script>
 <script>
 $(function(){
-  var slideView = $('.views').simpleSlideView();
+  var $container = $('.views')
+    , $window = $(window)
+    , slideView = $container.simpleSlideView({cssSupport:false});
   FastClick.attach(document.body);
+  $container.on('viewChangeEnd', function () {
+    var containerTop = $container.position().top;
+    if ($(window).scrollTop() > $container.position().top)
+      $.scrollTo($container, 100);
+  });
   slideView.on();
 });
 </script>
