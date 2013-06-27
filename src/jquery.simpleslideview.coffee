@@ -27,13 +27,11 @@ vendors =
   O: 'o'
   ms: 'MS'
 testEl = document.createElement('div')
-
 # determine prefix(es) to use
 for vendor, event of vendors when testEl.style[vendor + 'TransitionProperty']?
   prefix = '-' + vendor.toLowerCase() + '-'
   eventPrefix = event
   break
-
 # possibly prefixed property and event names
 transform = prefix + 'transform'
 transition = prefix + 'transition'
@@ -44,8 +42,7 @@ transitionEnd = if eventPrefix? then eventPrefix + 'TransitionEnd' else 'transit
 resetStyles = (el, styles) ->
   $el = $(el)
   reset = {}
-  for style in styles
-    reset[style] = ''
+  reset[style] = '' for style in styles
   $el.css reset
 
 # the main plugin class, will get instantiated from $.fn.simpleSlideView
@@ -73,7 +70,7 @@ class SimpleSlideView
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
 
-  slideView: (targetView, push) ->
+  changeView: (targetView, push) ->
     @$container.trigger @options.eventNames.viewChangeStart
     $targetView = $ targetView
     containerWidth = @$container.outerWidth()
@@ -130,12 +127,8 @@ class SimpleSlideView
         @$container.css 'height', $targetView.outerHeight()
       else if event.target is @$container[0]
         resetStyles @$container, [
-          'height'
-          'overflow'
-          'position'
-          'width'
-          backfaceVisibility
-          transition
+          'height', 'overflow', 'position', 'width'
+          backfaceVisibility, transition
         ]
         $window.off transitionEnd
         @$container.trigger @options.eventNames.viewChangeEnd
@@ -146,13 +139,11 @@ class SimpleSlideView
       @$activeView.css transform, 'translateX(' + distance + 'px)'
       $targetView.css transform, 'translateX(' + 0 + 'px)'
 
-  pushView: (targetView) -> @slideView targetView, true
+  pushView: (targetView) -> @changeView targetView, true
+  popView: (targetView) -> @changeView targetView
 
-  popView: (targetView) -> @slideView targetView
-
-
-$.fn.simpleSlideView = (options = {}, args...) ->
+# instantiate a new class when calling the plugin
+$.fn.simpleSlideView = (options = {}, extras) ->
   options = { views: options } if typeof options isnt 'object'
-  for arg in args when typeof arg is 'object'
-    $.extend options, arg
+  if typeof extras is 'object' then $.extend options, extras
   return new SimpleSlideView @, options
