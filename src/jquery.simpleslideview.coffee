@@ -110,7 +110,12 @@ class SimpleSlideView
       @options.duration
       @options.easing
       () -> $(@).css(resetCSS)
-    @$container.animate height: $targetView.outerHeight()
+    @$container.animate height: $targetView.outerHeight(), () =>
+      @$container.css
+        height: ''
+        overflow: ''
+        position: ''
+        width: ''
     @scrollToTop()
     @$activeView = $targetView
 
@@ -140,13 +145,26 @@ class SimpleSlideView
     resetCSS[transition] = ''
     resetCSS[transform] = ''
 
-    $targetView.one transitionEnd, () =>
-      @$activeView.add($targetView).css resetCSS
-      @$activeView.hide()
-      @$activeView = $targetView
-      @$container.css transition, 'height ' + (@options.duration / 2) + 'ms ' + @options.easing
-      @$container.css 'height', $targetView.outerHeight()
-      @scrollToTop()
+    containerResetCSS =
+      height: ''
+      overflow: ''
+      position: ''
+      width: ''
+    containerResetCSS[backfaceVisibility] = ''
+    containerResetCSS[transition] = ''
+
+    $window.on transitionEnd, (event) =>
+      if event.target is $targetView[0]
+        @$activeView.add($targetView).css resetCSS
+        @$activeView.hide()
+        @$activeView = $targetView
+        @$container.css transition, 'height ' + (@options.duration / 2) + 'ms ' + @options.easing
+        @$container.css 'height', $targetView.outerHeight()
+        @scrollToTop()
+      else if event.target is @$container[0]
+        @$container.css containerResetCSS
+        $window.off transitionEnd
+      else return
 
     $targetView.css(preCSS).show 0, () =>
       @$activeView.add($targetView).css baseCSS
