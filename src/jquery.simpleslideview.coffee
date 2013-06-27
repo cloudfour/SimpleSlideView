@@ -1,132 +1,167 @@
-$ = jQuery
-$.fn.simpleSlideView = (views, options) ->
-  settings =
-    views: "> div"
-    active: false
-    duration: 500
-  options = $.extend options, { container: @, views: views }
-  settings = $.extend settings, options
+# compatible with jQuery or Zepto
+$ = if jQuery? then jQuery else Zepto
+isZepto = Zepto? and $ is Zepto
 
-  $container = $(settings.container)
-  $views = $(settings.views, $container)
-  $active = if settings.active then $(active) else $views.first()
+# helper to attach to window method
+$window = $(this)
 
-  isActive = false
-  cssSupport = (Modernizr? and Modernizr.csstransforms and Modernizr.csstransitions)
-  transEndEventNames =
-    'WebkitTransition': 'webkitTransitionEnd'
-    'MozTransition': 'transitionend'
-    'OTransition': 'oTransitionEnd otransitionend'
-    'msTransition': 'MSTransitionEnd'
-    'transition': 'transitionend'
-  if cssSupport
-    transformPrefix = Modernizr.prefixed('transform').replace(/([A-Z])/g, (str,m1) -> return '-' + m1.toLowerCase()).replace(/^ms-/,'-ms-')
-    transEndEventName = transEndEventNames[Modernizr.prefixed 'transition']
+# default settings
+defaults =
+  views: '> div'
+  cssSupport: false
+  activeView: null
+  duration: $.fx.speeds._default
+  easing: null
+  jsEasing: null
+  cssEasing: null
+  dataAttrEvent: 'click'
+  dataAttr:
+    push: 'pushview'
+    pop: 'popview'
+  enableScrollTo: true
 
-  actions = {
-    slideView: (target, push) ->
-      $target = $(target)
-      containerWidth = $container.width()
-      $container.css
-        height: $container.outerHeight()
-        overflow: "hidden"
-        position: "relative"
-        width: "100%"
-      if cssSupport
-        actions.animateCSS $target, push, containerWidth
-      else
-        actions.animateJS $target, push, containerWidth
+# helpers for new or experimental CSS features
+prefix = ''
+vendors =
+  Webkit: 'webkit'
+  Moz: ''
+  O: 'o'
+  ms: 'MS'
+testEl = document.createElement('div')
 
-    animateCSS: ($target, push, containerWidth) ->
-      distance = if push then containerWidth * -1 else containerWidth
-      $target.show 0, () ->
-        $container.css "-webkit-backface": "hidden"
-        if $(window).scrollTop() > $container.position().top
-          $.scrollTo $container, 100
-        $active.css
-          "-webkit-backface": "hidden"
-          transition: transformPrefix + " " + settings.duration + "ms ease"
-          transform: "translateX(" + distance + "px)"
-        $target.css
-          "-webkit-backface": "hidden"
-          transition: transformPrefix + " " + settings.duration + "ms ease"
-          transform: "translateX(" + distance + "px)"
-      .css
-        left: if push then containerWidth else containerWidth * -1
-        position: "absolute"
-        top: 0
-        width: containerWidth
-      $(window).on transEndEventName, () ->
-        $container.css
-          transition: "height 100ms linear"
-          height: $target.outerHeight() + "px"
-        $target.attr "style", ""
-        $active.attr("style", "").hide()
-        $(window).off transEndEventName
-        $active = $target
+# determine prefix(es) to use
+for vendor, event of vendors when testEl.style[vendor + 'TransitionProperty']?
+  prefix = '-' + vendor.toLowerCase() + '-'
+  eventPrefix = event
+  break
 
-    animateJS: ($target, push, containerWidth) ->
-      $active.css
-        left: 0
-        position: "absolute"
-        top: 0
-        width: containerWidth
-      .animate
-        left: if push then containerWidth * -1 else containerWidth
-        () ->
-          $(@).attr("style", "").hide()
-      $target.show().css
-        left: if push then containerWidth else containerWidth * -1
-        position: "absolute"
-        top: 0
-        width: containerWidth
-      .animate
-        left: 0
-        () ->
-          $(@).attr("style", "")
-      $container.animate height: $target.outerHeight()
-      if $(window).scrollTop() > $container.position().top
-        $.scrollTo $container, settings.duration
-      $active = $target
+# possibly prefixed property and event names
+transform = prefix + 'transform'
+transition = prefix + 'transition'
+backfaceVisibility = prefix + 'backface-visibility'
+transitionEnd = if eventPrefix? then eventPrefix + 'TransitionEnd' else 'transitionend'
 
-    on: () ->
-      if isActive then return
-      isActive = true
-      $views.not($active).css "display", "none"
-      $container.on "click", "[data-pushview]", (event) ->
+# the main plugin class, will get instantiated from $.fn.simpleSlideView
+class SimpleSlideView
+  constructor: (@element, options) ->
+    @options = $.extend true, {}, defaults, options
+    @$container = $ @element
+    @$views = @$container.find @options.views
+    @$activeView = if @options.activeView then @$container.find @options.activeView else @$views.first()
+    @$window = $ window
+    @animate = if @options.cssSupport then @animateCSS else @animateJS
+    @options.easing = @options.cssEasing if @options.cssSupport and @options.cssEasing
+    @options.easing = @options.jsEasing if @options.jsEasing unless @options.cssSupport
+    @options.easing = 'linear' if @options.cssSupport unless @options.easing
+
+  on: () ->
+    @$views.not(@$activeView).hide()
+    if @options.dataAttrEvent?
+      @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']', (event) =>
         event.preventDefault()
-        actions.pushView $(@).data "pushview"
-      $container.on "click", "[data-popview]", (event) ->
+        @pushView $(event.target).data @options.dataAttr.push
+      @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']', (event) =>
         event.preventDefault()
-        actions.popView $(@).data("popview")
-    
-    off: () ->
-      unless isActive then return
-      isActive = false
-      $container.add($views).stop()
-      $container.css
-        height: ""
-        overflow: ""
-        position: ""
-        width: ""
-      $views.css
-        left: ""
-        position: ""
-        top: ""
-        width: ""
-      $container.off "click", "[data-pushview]"
-      $container.off "click", "[data-popview]"
-      $views.css "display", ""
+        @popView $(event.target).data @options.dataAttr.pop
 
-    pushView: (target) ->
-      actions.slideView target, true
+  off: () ->
+    @$views.show()
+    if @options.dataAttrEvent?
+      @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
+      @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
 
-    popView: (target) ->
-      actions.slideView target
-  }
+  slideView: (targetView, push) ->
+    $targetView = $ targetView
+    containerWidth = @$container.width()
+    @$container.css
+      height: @$container.outerHeight()
+      overflow: 'hidden'
+      position: 'relative'
+      width: '100%'
+    @animate $targetView, push, containerWidth
 
-  on: actions.on
-  off: actions.off
-  pushView: actions.pushView
-  popView: actions.popView
+  scrollToTop: () ->
+    if @options.enableScrollTo and $.fn.scrollTo?
+      containerTop = @$container.position().top
+      if $window.scrollTop() > containerTop
+        $.scrollTo containerTop, @options.duration
 
+  animateJS: ($targetView, push, containerWidth) ->
+    resetCSS =
+      left: ''
+      position: ''
+      top: ''
+      width: ''
+    baseCSS = $.extend {}, resetCSS,
+      position: 'absolute'
+      top: 0
+      width: containerWidth
+    @$activeView.css $.extend {}, baseCSS,
+      left: 0
+    @$activeView.animate
+      left: if push then containerWidth * -1 else containerWidth
+      @options.duration
+      @options.easing
+      () -> $(@).css(resetCSS).hide()
+    $targetView.show().css $.extend {}, baseCSS,
+      left: if push then containerWidth else containerWidth * -1
+    $targetView.animate
+      left: 0
+      @options.duration
+      @options.easing
+      () -> $(@).css(resetCSS)
+    @$container.animate height: $targetView.outerHeight()
+    @scrollToTop()
+    @$activeView = $targetView
+
+  animateCSS: ($targetView, push, containerWidth) ->
+    distance = if push then containerWidth * -1 else containerWidth
+
+    @$container.css backfaceVisibility, 'hidden'
+
+    baseCSS =
+      position: 'absolute'
+      top: 0
+      width: '100%'
+    baseCSS[backfaceVisibility] = 'hidden'
+    baseCSS[transition] = transform + ' ' + @options.duration + 'ms ' + @options.easing
+
+    preCSS = {}
+    preCSS[transform] = 'translateX(' + (distance * -1) + 'px)'
+    inCSS = {}
+    inCSS[transform] = 'translateX(' + 0 + 'px)'
+
+    resetCSS =
+      display: ''
+      position: ''
+      top: ''
+      width: ''
+    resetCSS[backfaceVisibility] = ''
+    resetCSS[transition] = ''
+    resetCSS[transform] = ''
+
+    $targetView.one transitionEnd, () =>
+      @$activeView.add($targetView).css resetCSS
+      @$activeView.hide()
+      @$activeView = $targetView
+      @$container.css transition, 'height ' + (@options.duration / 2) + 'ms ' + @options.easing
+      @$container.css 'height', $targetView.outerHeight()
+      @scrollToTop()
+
+    $targetView.css(preCSS).show 0, () =>
+      @$activeView.add($targetView).css baseCSS
+      @$activeView.css transform, 'translateX(' + distance + 'px)'
+      $targetView.css transform, 'translateX(' + 0 + 'px)'
+
+  pushView: (targetView) ->
+    @slideView targetView, true
+
+  popView: (targetView) ->
+    @slideView targetView
+
+
+$.fn.simpleSlideView = (options = {}, args...) ->
+  options = { views: options } if typeof options isnt 'object'
+  for arg in args when typeof arg is 'object'
+    $.extend options, arg
+  return new SimpleSlideView @, options

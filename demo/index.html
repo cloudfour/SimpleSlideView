@@ -84,7 +84,10 @@
     var $, slideView;
     $ = jQuery;
     FastClick.attach(document.body);
-    slideView = $(".views").simpleSlideView();
+    slideView = $(".views").simpleSlideView({
+      cssSupport: true,
+      cssEasing: 'ease-out'
+    });
     slideView.on();
   }).call(this);
 </script>
