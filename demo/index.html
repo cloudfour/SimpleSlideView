@@ -6,92 +6,102 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <title>SimpleSlideView Demo</title>
   <style>
-    body { margin: 0; }
+/*    body { margin: 0; }
     h3 { padding: 0 10px; }
     .views { background-color: #ccc; }
     .view > div { padding: 10px; }
-    .view h1 { margin-top: 0; }
+    .view h1 { margin-top: 0; }*/
+
+    body {
+      margin: 0;
+    }
+
+    .view {
+      background-color: #eee;
+      display: block;
+      margin: 0;
+      padding: 1em;
+    }
   </style>
+  <!--<script src="../vendor/modernizr.custom.js"></script>-->
 </head>
 <body>
 
-<div class="page">
+<header>
+  <h1>SimpleSlideView Demo</h1>
+</header>
 
-  <div class="header clearfix">
+<main class="views">
 
-    <h3>header</h3>
+  <nav class="view" id="nav">
+    <ul>
+      <li><a href="#what" data-pushview>What it does</a></li>
+      <li><a href="#how" data-pushview>How it works</a></li>
+      <li><a href="#where" data-pushview>Where to get it</a></li>
+    </ul>
+  </nav>
 
+  <div class="view" id="what">
+    <h2>What it does</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
+    <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
+    <ul>
+      <li><a href="#nav" data-popview>Last section</a></li>
+      <li><a href="#how" data-pushview>Next section</a></li>
+    </ul>
   </div>
 
-  <div class="views clearfix">
-
-    <div class="view one" id="view-one">
-      <div>
-        <h1>one</h1>
-        <div data-pushview="#view-two" style="text-align: right;">next</div>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <div data-pushview="#view-two" style="text-align: right;">next</div>
-      </div>
-    </div>
-
-    <div class="view two" id="view-two">
-      <div>
-        <h1>two</h1>
-        <div data-popview="#view-one">back</div>
-        <div data-pushview="#view-three" style="text-align: right;">next</div>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <div data-popview="#view-one">back</div>
-        <div data-pushview="#view-three" style="text-align: right;">next</div>
-      </div>
-    </div>
-
-    <div class="view three" id="view-three">
-      <div>
-        <h1>three</h1>
-        <div data-popview="#view-two">back</div>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <p>words</p>
-        <div data-popview="#view-two">back</div>
-      </div>
-    </div>
-
+  <div class="view" id="how">
+    <h2>How it works</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
+    <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
+    <ul>
+      <li><a href="#what" data-popview>Last section</a></li>
+      <li><a href="#where" data-pushview>Next section</a></li>
+    </ul>
   </div>
 
-</div>
+  <div class="view" id="where">
+    <h2>Where to get it</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
+    <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
+    <ul>
+      <li><a href="#how" data-popview>Last section</a></li>
+      <li><a href="#nav" data-popview>Start over</a></li>
+    </ul>
+  </div>
 
-<div class="footer" style="clear: both; padding-top: 1em;">
-  <h3>Footer</h3>
-</div>
+</main>
 
-<script src="../vendor/modernizr.custom.js"></script>
 <script src="../vendor/fastclick.js"></script>
 <script src="../vendor/jquery.min.js"></script>
 <script src="../vendor/jquery.scrollTo.min.js"></script>
 <script src="../lib/jquery.simpleslideview.js"></script>
 <script>
-$(function(){
-  var $container = $('.views')
-    , $window = $(window)
-    , slideView = $container.simpleSlideView({cssSupport:false});
-  FastClick.attach(document.body);
-  $container.on('viewChangeEnd', function () {
-    var containerTop = $container.position().top;
-    if ($(window).scrollTop() > $container.position().top)
-      $.scrollTo($container, 100);
-  });
+
+var slideView;
+
+$(function (){
+
+  var $viewContainer = $('.views');
+
+  slideView = $viewContainer.simpleSlideView();
+
   slideView.on();
+
 });
+// $(function(){
+//   var $container = $('.views')
+//     , $window = $(window)
+//     , slideView = $container.simpleSlideView();
+//   FastClick.attach(document.body);
+//   $container.on('viewChangeEnd', function () {
+//     var containerTop = $container.position().top;
+//     if ($(window).scrollTop() > $container.position().top)
+//       $.scrollTo($container, 100);
+//   });
+//   slideView.on();
+// });
 </script>
 
 </body>

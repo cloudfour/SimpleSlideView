@@ -5,7 +5,7 @@ $window = $(window)
 
 # default settings
 defaults =
-  views: '> div'
+  views: '> *'
   activeView: null
   cssSupport: Modernizr? and Modernizr.csstransforms and Modernizr.csstransitions
   duration: $.fx.speeds._default
@@ -58,11 +58,20 @@ class SimpleSlideView
     @$views.not(@$activeView).css 'display', 'none'
     if @options.dataAttrEvent?
       @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']', (event) =>
-        event.preventDefault()
-        @pushView $(event.currentTarget).data @options.dataAttr.push
+        $el = $(event.currentTarget)
+        target = $el.data @options.dataAttr.push
+        target = $el.attr('href') if !target.length
+        if target.length
+          event.preventDefault()
+          console.log(target)
+          @pushView target
       @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']', (event) =>
-        event.preventDefault()
-        @popView $(event.currentTarget).data @options.dataAttr.pop
+        $el = $(event.currentTarget)
+        target = $el.data @options.dataAttr.pop
+        target = $el.attr('href') if !target.length
+        if target.length
+          event.preventDefault()
+          @popView target
 
   off: () ->
     @$views.css 'display', ''
@@ -71,6 +80,7 @@ class SimpleSlideView
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
 
   changeView: (targetView, push) ->
+    console.log targetView
     @$container.trigger @options.eventNames.viewChangeStart
     $targetView = $ targetView
     containerWidth = @$container.outerWidth()
