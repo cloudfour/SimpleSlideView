@@ -74,8 +74,12 @@
 </main>
 
 <script src="../vendor/fastclick.js"></script>
-<script src="../vendor/jquery.min.js"></script>
-<script src="../vendor/jquery.scrollTo.min.js"></script>
+<script>
+document.write('<script src=../vendor/' +
+('__proto__' in {} ? 'zepto' : 'jquery') +
+'.min.js><\/script>')
+</script>
+<!--<script src="../vendor/jquery.scrollTo.min.js"></script>-->
 <script src="../lib/jquery.simpleslideview.js"></script>
 <script>
 
@@ -90,6 +94,7 @@ $(function (){
   slideView.on();
 
 });
+
 // $(function(){
 //   var $container = $('.views')
 //     , $window = $(window)
