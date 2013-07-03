@@ -86,9 +86,13 @@ class SimpleSlideView
       @options.duration
       @options.easing
       () -> resetStyles @, ['left', 'position', 'top', 'width']
-    @$container.animate height: outerHeight($targetView), () =>
-      resetStyles @$container, ['height', 'overflow', 'position', 'width']
-      @$container.trigger @options.eventNames.viewChangeEnd
+    @$container.animate
+      height: outerHeight($targetView)
+      @options.duration
+      @options.easing
+      () =>
+        resetStyles @$container, ['height', 'overflow', 'position', 'width']
+        @$container.trigger @options.eventNames.viewChangeEnd
     @$activeView = $targetView
 
   pushView: (targetView) -> @changeView targetView, true

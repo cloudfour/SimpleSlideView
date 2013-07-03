@@ -83,17 +83,32 @@ document.write('<script src=../vendor/' +
 <script src="../lib/jquery.simpleslideview.js"></script>
 <script>
 
-var slideView;
+var $container = $('.views')
+  , containerTop = $container.position().top
+  , $body = $('body')
+  , slideView = $container.simpleSlideView();
 
-$(function (){
-
-  var $viewContainer = $('.views');
-
-  slideView = $viewContainer.simpleSlideView();
-
-  slideView.on();
-
+$container.on('viewChangeEnd', function () {
+  console.log('hello?');
+  if ($body.prop('scrollTop') > containerTop) {
+    console.log('scroll here');
+    // $body.animate({ scrollTop: containerTop }, 2000);
+  }
 });
+
+slideView.on();
+
+// var slideView;
+
+// $(function (){
+
+//   var $viewContainer = $('.views');
+
+//   slideView = $viewContainer.simpleSlideView();
+
+//   slideView.on();
+
+// });
 
 // $(function(){
 //   var $container = $('.views')
