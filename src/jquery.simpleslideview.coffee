@@ -5,6 +5,8 @@ defaults =
   activeView: null
   duration: $.fx.speeds._default
   easing: if Zepto? and not jQuery? then 'ease-out' else 'swing'
+  useTransformProps: Zepto?
+  cssPrefix: if $.fx.cssPrefix? then $.fx.cssPrefix else ''
   dataAttrEvent: 'click'
   dataAttr:
     push: 'pushview'
@@ -61,38 +63,52 @@ class SimpleSlideView
   changeView: (targetView, push) ->
     @$container.trigger @options.eventNames.viewChangeStart
     $targetView = $ targetView
-    containerWidth = outerWidth(@$container)
+    $bothViews = @$activeView.add $targetView
+    containerWidth = outerWidth @$container
+    outAnimProps = {}
+    inAnimProps = {}
+    resetProps = ['left', 'position', 'top', 'width']
+
     @$container.css
-      height: outerHeight(@$container)
+      height: outerHeight @$container
       overflow: 'hidden'
       position: 'relative'
       width: '100%'
-    # This part used to be in a separate method
-    baseCSS =
+
+    $bothViews.css
       position: 'absolute'
       top: 0
       width: containerWidth
-    @$activeView.css $.extend {}, baseCSS,
-      left: 0
-    @$activeView.animate
-      left: if push then containerWidth * -1 else containerWidth
-      @options.duration
-      @options.easing
-      () -> resetStyles(@, ['left', 'position', 'top', 'width']).hide()
-    $targetView.show().css $.extend {}, baseCSS,
-      left: if push then containerWidth else containerWidth * -1
-    $targetView.animate
-      left: 0
-      @options.duration
-      @options.easing
-      () -> resetStyles @, ['left', 'position', 'top', 'width']
+
+    if @options.useTransformProps
+      transformProp = @options.cssPrefix + 'transform'
+      resetProps.push transformProp
+      $bothViews.css 'left', 0
+      $targetView.css transformProp, 'translateX(' + (if push then 100 else -100) + '%)'
+      outAnimProps[transformProp] = 'translateX(' + (if push then -100 else 100) + '%)'
+      inAnimProps[transformProp] = 'translateX(0)'
+    else
+      @$activeView.css 'left', 0
+      $targetView.css 'left', if push then containerWidth else containerWidth * -1
+      outAnimProps['left'] = if push then containerWidth * -1 else containerWidth
+      inAnimProps['left'] = 0
+
+    $targetView.show()
+
+    @$activeView.animate outAnimProps, @options.duration, @options.easing, () ->
+      resetStyles(@, resetProps).hide()
+
+    $targetView.animate inAnimProps, @options.duration, @options.easing, () ->
+      resetStyles(@, resetProps)
+
     @$container.animate
-      height: outerHeight($targetView)
+      height: outerHeight $targetView
       @options.duration
       @options.easing
       () =>
         resetStyles @$container, ['height', 'overflow', 'position', 'width']
         @$container.trigger @options.eventNames.viewChangeEnd
+
     @$activeView = $targetView
 
   pushView: (targetView) -> @changeView targetView, true
