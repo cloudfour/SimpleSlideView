@@ -93,10 +93,9 @@ document.write('<script src=../vendor/' +
 var $container = $('.views')
   , containerTop = $container.position().top
   , $body = $('body')
-  , slideView = $container.simpleSlideView();
+  , slideView = $container.simpleSlideView({ duration: 250 });
 
 $container.on('viewChangeEnd', function () {
-  console.log('hello?');
   if ($body.prop('scrollTop') > containerTop) {
     console.log('scroll here');
     // $body.animate({ scrollTop: containerTop }, 2000);
