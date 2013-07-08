@@ -4,17 +4,22 @@ defaults =
   views: '.view'
   activeView: null
   duration: $.fx.speeds._default
-  easing: null
+  easing: if Zepto? then 'ease-out' else 'swing'
   useTransformProps: Zepto?
   use3D: Modernizr? and Modernizr.csstransforms3d
   cssPrefix: if $.fx.cssPrefix? then $.fx.cssPrefix else ''
   resizeHeight: true
   heightDuration: null
   deferHeightChange: Zepto?
+  scrollAfter: if $.scrollTo? then 'scrollTo' else false
   dataAttrEvent: 'click'
   dataAttr:
     push: 'pushview'
     pop: 'popview'
+  classNames:
+    container: 'SimpleSlideView-container'
+    view: 'SimpleSlideView-view'
+    activeView: 'SimpleSlideView-view-active'
   eventNames:
     viewChangeStart: 'viewChangeStart'
     viewChangeEnd: 'viewChangeEnd'
@@ -38,10 +43,13 @@ class SimpleSlideView
     @options = $.extend true, {}, defaults, options
     @options.heightDuration = @options.duration unless @options.heightDuration
     @$container = $ element
-    @$views = @$container.find @options.views
+    @$views = if typeof @options.views is 'string' then @$container.find(@options.views) else $(@options.views)
     @$activeView =  if @options.activeView? then $(@options.activeView) else @$views.first()
 
   on: () ->
+    @$container.addClass @options.classNames.container
+    @$views.addClass @options.classNames.view
+    @$activeView.addClass @options.classNames.activeView
     @$views.not(@$activeView).css 'display', 'none'
     if @options.dataAttrEvent?
       @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']', (event) =>
@@ -60,6 +68,9 @@ class SimpleSlideView
           @popView target
 
   off: () ->
+    @$container.removeClass @options.classNames.container
+    @$views.removeClass @options.classNames.view + ' ' + @options.classNames.activeView
+    # @$activeView.removeClass @options.classNames.activeView
     @$views.css 'display', ''
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
@@ -123,8 +134,18 @@ class SimpleSlideView
       resetStyles($targetView, resetProps)
       animateHeight() if @options.deferHeightChange
 
+    if @options.scrollAfter
+      containerTop = @$container.position().top
+      if $(window).scrollTop() > containerTop
+        if typeof @options.scrollAfter is 'string' and $[@options.scrollAfter]?
+          $[@options.scrollAfter] containerTop
+        else
+          window.scrollTo(0, containerTop);
+
     animateHeight() unless @options.deferHeightChange
 
+    @$activeView.removeClass @options.classNames.activeView
+    $targetView.addClass @options.classNames.activeView
     @$activeView = $targetView
 
   pushView: (targetView) -> @changeView targetView, true
