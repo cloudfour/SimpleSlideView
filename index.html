@@ -6,30 +6,59 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <title>SimpleSlideView Demo</title>
   <style>
-/*    body { margin: 0; }
-    h3 { padding: 0 10px; }
-    .views { background-color: #ccc; }
-    .view > div { padding: 10px; }
-    .view h1 { margin-top: 0; }*/
-
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+
+    html {
+      background: #f6f6f6;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 100%;
+      line-height: 1.4em;
     }
 
     body {
       margin: 0;
     }
 
+    a {
+      color: #0088cc;
+      text-decoration: none;
+    }
+
     .views {
-      background-color: #eee;
+      background-color: #fff;
+      border-color: #ccc;
+      border-style: solid;
+      border-width: 1px 0;
       display: block;
     }
 
     .view {
       margin: 0;
+      /*padding: 1em;*/
+    }
+
+    #nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #nav li {
+      border-bottom: 1px solid #ccc;
+    }
+
+    #nav li:last-child {
+      border-bottom-width: 0;
+    }
+
+    #nav a {
+      display: block;
       padding: 1em;
     }
+
   </style>
   <script src="vendor/modernizr.custom.js"></script>
 </head>
@@ -92,43 +121,9 @@ document.write('<script src=vendor/' +
 <script src="lib/simpleslideview.min.js"></script>
 <script>
 
-var $container = $('.views')
-  , containerTop = $container.position().top
-  , slideView = $container.simpleSlideView({ duration: 250 });
-
-// $container.on('viewChangeStart', function () {
-//   if ($(window).scrollTop() > containerTop) {
-//     console.log('scroll here');
-//     // $body.animate({ scrollTop: containerTop }, 2000);
-//   }
-// });
-
+var slideView = $('.views').simpleSlideView({ duration: 250 });
 slideView.on();
 
-// var slideView;
-
-// $(function (){
-
-//   var $viewContainer = $('.views');
-
-//   slideView = $viewContainer.simpleSlideView();
-
-//   slideView.on();
-
-// });
-
-// $(function(){
-//   var $container = $('.views')
-//     , $window = $(window)
-//     , slideView = $container.simpleSlideView();
-//   FastClick.attach(document.body);
-//   $container.on('viewChangeEnd', function () {
-//     var containerTop = $container.position().top;
-//     if ($(window).scrollTop() > $container.position().top)
-//       $.scrollTo($container, 100);
-//   });
-//   slideView.on();
-// });
 </script>
 
 </body>
