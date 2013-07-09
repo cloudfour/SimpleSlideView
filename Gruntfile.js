@@ -5,19 +5,19 @@ module.exports = function(grunt) {
     coffee: {
       compile: {
         files: {
-          'lib/jquery.simpleslideview.js': 'src/jquery.simpleslideview.coffee'
+          'lib/simpleslideview.js': 'src/simpleslideview.coffee'
         }
       }
     },
     uglify: {
       build: {
-        src: 'lib/jquery.simpleslideview.js',
-        dest: 'lib/jquery.simpleslideview.min.js'
+        src: 'lib/simpleslideview.js',
+        dest: 'lib/simpleslideview.min.js'
       }
     },
     watch: {
       scripts: {
-        files: ['src/jquery.simpleslideview.coffee'],
+        files: ['src/simpleslideview.coffee'],
         tasks: ['coffee', 'uglify']
       }
     }
