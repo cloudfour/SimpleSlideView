@@ -13,6 +13,7 @@
 
     html {
       background: #f6f6f6;
+      color: #444;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-size: 100%;
       line-height: 1.4em;
@@ -27,17 +28,38 @@
       text-decoration: none;
     }
 
+    h1 {
+      font-size: 1.25em;
+      line-height: 1em;
+      margin: 0 0 0.5em;
+      padding: 0;
+    }
+
+    .island {
+      padding: 1em;
+    }
+
+    .island p {
+      font-size: 0.875em;
+      line-height: 1.4em;
+      margin: 0;
+    }
+
     .views {
       background-color: #fff;
       border-color: #ccc;
       border-style: solid;
-      border-width: 1px 0;
+      border-width: 2px 0;
       display: block;
     }
 
     .view {
       margin: 0;
       /*padding: 1em;*/
+    }
+
+    .view-content {
+      padding: 1em;
     }
 
     #nav ul {
@@ -47,7 +69,7 @@
     }
 
     #nav li {
-      border-bottom: 1px solid #ccc;
+      border-bottom: 2px solid #ccc;
     }
 
     #nav li:last-child {
@@ -55,8 +77,15 @@
     }
 
     #nav a {
+      background: url(img/arrow-right.svg) no-repeat 95% center;
       display: block;
-      padding: 1em;
+      font-size: 1.125em;
+      line-height: 1.24444444444445em;
+      padding: 0.88888888888889em;
+    }
+
+    .byline {
+      color: #999;
     }
 
   </style>
@@ -64,51 +93,62 @@
 </head>
 <body>
 
-<header>
-  <h1>SimpleSlideView Demo</h1>
-</header>
+<div class="island">
+  <h1>SimpleSlideView</h1>
+  <p>A nifty little <a href="">jQuery</a> or <a href="">Zepto</a> plugin for the simplest of sliding views.</p>
+</div>
 
-<main class="views">
+<div class="views">
 
-  <nav class="view" id="nav">
+  <div class="view" id="nav">
     <ul>
       <li><a href="#what" data-pushview>What it does</a></li>
       <li><a href="#how" data-pushview>How it works</a></li>
       <li><a href="#where" data-pushview>Where to get it</a></li>
     </ul>
-  </nav>
+  </div>
 
   <div class="view" id="what">
-    <h2>What it does</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
-    <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
-    <ul>
-      <li><a href="#nav" data-popview>Last section</a></li>
-      <li><a href="#how" data-pushview>Next section</a></li>
-    </ul>
+    <div class="view-content">
+      <h2>What it does</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
+      <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
+      <ul>
+        <li><a href="#nav" data-popview>Last section</a></li>
+        <li><a href="#how" data-pushview>Next section</a></li>
+      </ul>
+    </div>
   </div>
 
   <div class="view" id="how">
-    <h2>How it works</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
-    <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
-    <ul>
-      <li><a href="#what" data-popview>Last section</a></li>
-      <li><a href="#where" data-pushview>Next section</a></li>
-    </ul>
+    <div class="view-content">
+      <h2>How it works</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
+      <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
+      <ul>
+        <li><a href="#what" data-popview>Last section</a></li>
+        <li><a href="#where" data-pushview>Next section</a></li>
+      </ul>
+    </div>
   </div>
 
   <div class="view" id="where">
-    <h2>Where to get it</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
-    <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
-    <ul>
-      <li><a href="#how" data-popview>Last section</a></li>
-      <li><a href="#nav" data-popview>Start over</a></li>
-    </ul>
+    <div class="view-content">
+      <h2>Where to get it</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
+      <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
+      <ul>
+        <li><a href="#how" data-popview>Last section</a></li>
+        <li><a href="#nav" data-popview>Start over</a></li>
+      </ul>
+    </div>
   </div>
 
-</main>
+</div>
+
+<div class="island byline">
+  <p>From your friends at <a href="http://cloudfour.com">Cloud Four</a></p>
+</div>
 
 <script src="vendor/fastclick.js"></script>
 <script>
