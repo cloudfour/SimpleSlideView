@@ -3,6 +3,7 @@ $ = if jQuery? then jQuery else Zepto
 defaults =
   views: '.view'
   activeView: null
+  deferOn: false
   duration: $.fx.speeds._default
   easing: if Zepto? then 'ease-out' else 'swing'
   useTransformProps: Zepto?
@@ -11,7 +12,8 @@ defaults =
   resizeHeight: true
   heightDuration: null
   deferHeightChange: Zepto?
-  scrollAfter: if $.scrollTo? then 'scrollTo' else false
+  scrollOnStart: if $.scrollTo? then 'scrollTo' else false
+  scrollToContainerTop: true
   dataAttrEvent: 'click'
   dataAttr:
     push: 'pushview'
@@ -45,6 +47,7 @@ class SimpleSlideView
     @$container = $ element
     @$views = if typeof @options.views is 'string' then @$container.find(@options.views) else $(@options.views)
     @$activeView =  if @options.activeView? then $(@options.activeView) else @$views.first()
+    @on() unless @options.deferOn
 
   on: () ->
     @$container.addClass @options.classNames.container
@@ -70,7 +73,6 @@ class SimpleSlideView
   off: () ->
     @$container.removeClass @options.classNames.container
     @$views.removeClass @options.classNames.view + ' ' + @options.classNames.activeView
-    # @$activeView.removeClass @options.classNames.activeView
     @$views.css 'display', ''
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
@@ -84,6 +86,14 @@ class SimpleSlideView
     outAnimProps = {}
     inAnimProps = {}
     resetProps = ['left', 'position', 'top', 'width']
+
+    if @options.scrollOnStart
+      maxTop = if @options.scrollToContainerTop then @$container.position().top else 0
+      if $(window).scrollTop() > maxTop
+        if typeof @options.scrollOnStart is 'string' and $[@options.scrollOnStart]?
+          $[@options.scrollOnStart] maxTop, @options.duration
+        else
+          window.scrollTo 0, maxTop
 
     @$container.css
       height: outerHeight @$container
@@ -133,14 +143,6 @@ class SimpleSlideView
     $targetView.animate inAnimProps, @options.duration, @options.easing, () =>
       resetStyles($targetView, resetProps)
       animateHeight() if @options.deferHeightChange
-
-    if @options.scrollAfter
-      containerTop = @$container.position().top
-      if $(window).scrollTop() > containerTop
-        if typeof @options.scrollAfter is 'string' and $[@options.scrollAfter]?
-          $[@options.scrollAfter] containerTop
-        else
-          window.scrollTo(0, containerTop);
 
     animateHeight() unless @options.deferHeightChange
 

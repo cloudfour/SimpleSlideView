@@ -35,6 +35,46 @@
       padding: 0;
     }
 
+    p {
+      -moz-hyphens: auto;
+      -webkit-hyphens: auto;
+      hyphens: auto;
+    }
+
+    ul {
+      list-style-type: square;
+      padding-left: 1em;
+    }
+
+    li {
+      margin-bottom: 0.25em;
+      margin-top: 0.25em;
+    }
+
+    code {
+      background-color: #f6f6f6;
+      border: 1px solid #ddd;
+      border-radius: 0.25em;
+      display: inline-block;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.875em;
+      line-height: 1.4em;
+      padding-left: 0.25em;
+      padding-right: 0.25em;
+    }
+
+    pre {
+      background-color: #f6f6f6;
+      border-left: 2px solid #ccc;
+      padding: 0.5em;
+    }
+
+    pre code {
+      background-color: transparent;
+      border-width: 0;
+      padding: 0;
+    }
+
     .island {
       padding: 1em;
     }
@@ -55,11 +95,50 @@
 
     .view {
       margin: 0;
-      /*padding: 1em;*/
     }
 
     .view-content {
       padding: 1em;
+    }
+
+    .view-nav {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .view-nav:before,
+    .view-nav:after {
+      content: " ";
+      display: table;
+    }
+    .view-nav:after {
+      clear: both;
+    }
+
+    .view-nav li {
+      float: left;
+      width: 50%;
+    }
+
+    .view-nav a {
+      background-repeat: no-repeat;
+      display: block;
+      padding: 0.75em 1em;
+      white-space: nowrap;
+    }
+
+    .view-nav a[data-popview] {
+      background-image: url(img/hamburger.svg);
+      background-position: left center;
+      padding-left: 1.8em;
+    }
+
+    .view-nav a[data-pushview] {
+      background-image: url(img/arrow-right.svg);
+      background-position: right center;
+      padding-right: 1.8em;
+      text-align: right;
     }
 
     #nav ul {
@@ -70,6 +149,7 @@
 
     #nav li {
       border-bottom: 2px solid #ccc;
+      margin: 0;
     }
 
     #nav li:last-child {
@@ -88,6 +168,12 @@
       color: #999;
     }
 
+    .btn {
+      background-color: #0088cc;
+      border-radius: 0.25em;
+      color: #fff;
+      text-align: center;
+    }
   </style>
   <script src="vendor/modernizr.custom.js"></script>
 </head>
@@ -95,7 +181,7 @@
 
 <div class="island">
   <h1>SimpleSlideView</h1>
-  <p>A nifty little <a href="">jQuery</a> or <a href="">Zepto</a> plugin for the simplest of sliding views.</p>
+  <p>A nifty little <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a> plugin for the simplest of sliding views.</p>
 </div>
 
 <div class="views">
@@ -111,11 +197,11 @@
   <div class="view" id="what">
     <div class="view-content">
       <h2>What it does</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
-      <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
-      <ul>
-        <li><a href="#nav" data-popview>Last section</a></li>
-        <li><a href="#how" data-pushview>Next section</a></li>
+      <p>Sliding views let you present content in distinct, bite-sized chunks while maintaining hierarchy through the use of spacial animation. They look neat, too.</p>
+      <p>There are many wonderful JavaScript frameworks out there that pull this off beautifully... but they can get kind of complicated. When your needs are simple or responsive, <b>SimpleSlideView</b> may do the trick.</p>
+      <ul class="view-nav">
+        <li><a href="#nav" data-popview>Contents</a></li>
+        <li><a href="#how" data-pushview>How it works</a></li>
       </ul>
     </div>
   </div>
@@ -123,11 +209,19 @@
   <div class="view" id="how">
     <div class="view-content">
       <h2>How it works</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
-      <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
+      <p>The plugin only needs a few ingredients to work:</p>
       <ul>
-        <li><a href="#what" data-popview>Last section</a></li>
-        <li><a href="#where" data-pushview>Next section</a></li>
+        <li>Either <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a>.</li>
+        <li>A containing element.</li>
+        <li>Some special <code>data-pushview</code> and <code>data-popview</code> attributes on elements you want to trigger slides.</li>
+      </ul>
+      <p>Then call...</p>
+      <pre><code>$(myContainer).simpleSlideView();</code></pre>
+      <p>...and bob&rsquo;s your uncle!</p>
+      <p>Okay, there&rsquo;s a <em>little</em> more to it than that (especially if you want to customize a bunch of stuff). But not much.</p>
+      <ul class="view-nav">
+        <li><a href="#nav" data-popview>Contents</a></li>
+        <li><a href="#where" data-pushview>Where to get it</a></li>
       </ul>
     </div>
   </div>
@@ -135,11 +229,10 @@
   <div class="view" id="where">
     <div class="view-content">
       <h2>Where to get it</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat neque nec ante tincidunt, sit amet sollicitudin orci malesuada. Nam ac dui pellentesque, iaculis neque vitae, ultricies augue. Quisque convallis, justo sit amet vehicula molestie, odio leo accumsan eros, vel rutrum nunc massa vitae metus. Phasellus vehicula venenatis sapien a ornare.</p>
-      <p>Aliquam erat turpis, porta ac sodales sit amet, feugiat quis felis. Praesent vel varius eros, ultrices aliquet metus. In ut lacus iaculis, interdum mi quis, egestas ligula. Aliquam lectus massa, mollis at ante at, blandit mattis dui. Cras felis felis, iaculis a ante vitae, mattis ultrices lacus. Curabitur sed eros enim.</p>
-      <ul>
-        <li><a href="#how" data-popview>Last section</a></li>
-        <li><a href="#nav" data-popview>Start over</a></li>
+      <p>All this (plus documentation and source files) can be yours <em>right now</em> thanks to the magic of GitHub and open source software. Isn&rsquo;t life great?</p>
+      <ul class="view-nav">
+        <li><a href="#nav" data-popview>Contents</a></li>
+        <li><a class="btn" href="https://github.com/cloudfour/SimpleSlideView">View on GitHub</a></li>
       </ul>
     </div>
   </div>
@@ -152,17 +245,18 @@
 
 <script src="vendor/fastclick.js"></script>
 <script>
-document.write('<script src=vendor/' +
-('__proto__' in {} ? 'zepto' : 'jquery') +
-'.min.js><\/script>')
+var useZepto = ('__proto__' in {})
+  , lib = useZepto ? 'zepto' : 'jquery'
+  , scrollPlugin = useZepto ? 'scroll' : 'scrollTo';
+document.write(
+  '<script src=vendor/' + lib + '.min.js><\/script>' +
+  '<script src=vendor/' + lib + '.' + scrollPlugin + '.min.js><\/script>'
+);
 </script>
-<!--<script src="vendor/jquery.min.js"></script>-->
-<!--<script src="vendor/jquery.scrollTo.min.js"></script>-->
 <script src="lib/simpleslideview.min.js"></script>
 <script>
 
-var slideView = $('.views').simpleSlideView({ duration: 250 });
-slideView.on();
+$('.views').simpleSlideView({ duration: 250 });
 
 </script>
 
