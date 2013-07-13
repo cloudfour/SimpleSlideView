@@ -257,7 +257,11 @@ document.write(
 <script src="lib/simpleslideview.min.js"></script>
 <script>
 
-$('.views').simpleSlideView({ duration: 250 });
+$('.views').simpleSlideView({ duration: 250 }).pushView($('#where'));
+
+$('.views').on('viewChangeStart', function (event) {
+  console.log(arguments);
+});
 
 </script>
 

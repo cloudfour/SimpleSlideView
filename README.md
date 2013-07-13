@@ -9,11 +9,11 @@ A nifty little jQuery or Zepto plugin for the simplest of sliding views.
 
 SimpleSlideView requires either [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) (the default build should be fine).
 
-<!-- ### Optional: scrollTo
+### Optional: Scrolling
 
-This plugin was designed to work well with non-fixed layouts, which means it can be helpful to scroll to the top of the window or container prior to a view changing. If a `$.scrollTo` plugin is available, SimpleSlideView will attempt to use it for this functionality by default. It has been tested with [jquery.scrollTo](https://github.com/flesler/jquery.scrollTo) and [ZeptoScroll](https://github.com/suprMax/ZeptoScroll/).
+This plugin was designed to work well with non-fixed layouts, which means it can be helpful to scroll to the top of the window or container prior to a view changing. If a `$.scrollTo` plugin is available, SimpleSlideView will attempt to use it by default. It has been tested with [jquery.scrollTo](https://github.com/flesler/jquery.scrollTo) and [ZeptoScroll](https://github.com/suprMax/ZeptoScroll/).
 
-This functionality can be mimicked using SimpleSlideView's events if plugins aren't your bag. You can also just set the `scrollOnStart` option to `true` if you don't care about animation... no plugin required. -->
+This functionality can be mimicked using SimpleSlideView's events if plugins aren't your bag. You can also just set the `scrollOnStart` option to `true` if you don't care about animation... no plugin required. See options for more info.
 
 ## Getting started
 
@@ -43,6 +43,7 @@ If you'd like to use a different selector than `.view` for the views, you can sp
 ```javascript
 $('.container').simpleSlideView('.my-view-selector');
 ```
+
 [More options]() are available and can be passed as an object.
 
 ## Navigating between views
@@ -77,4 +78,191 @@ var slideView = $('.container').simpleSlideView();
 slideView.pushView('#my-view-selector');
 ```
 
-See [methods]() for more info.
+See methods for more info.
+
+## Getting responsive
+
+A sliding view isn't always appropriate when the viewport can show more content. Luckily, you can turn SimpleSlideView off and on whenever it makes sense for your project using the `on` and `off` methods.
+
+By default, SimpleSlideView will activate itself when initialized, but you can disable this by setting the `deferOn` option to `true`. An example:
+
+```javascript
+var slideView = $('.container').simpleSlideView({
+  // Do not activate unless the viewport is larger than 768pt
+  deferOn: ($(window).width() > 768)
+});
+
+// Turn on/off if window size changes
+$(window).on('resize', function(){
+  if ($(window).width() > 768) {
+    slideView.off();
+  } else {
+    slideView.on();
+  }
+});
+```
+
+## Options
+
+You can pass an object to the `simpleSlideView` method as the first or second argument:
+
+```javascript
+// This...
+$('.container').simpleSlideView('.my-view-selector', { duration: 250 });
+// ...is the same as this:
+$('.container').simpleSlideView({ views: '.my-view-selector', duration: 250 });
+```
+
+Here are all the options and their defaults:
+
+```coffeescript
+# The default view selector. An object will be a
+# jQuery or Zepto object, a string will be used
+# as a selector within the container.
+views: '.view'
+
+# The view that should be initially active. Can
+# also be an object or string. If 'null', the first
+# view in the container will be used.
+activeView: null
+
+# If 'true', SimpleSlideView will not activate
+# until the on() method is called.
+deferOn: false
+
+# The speed of animations. Defaults to the current
+# jQuery or Zepto default.
+duration: $.fx.speeds._default
+
+# The easing method to use for animations. Defaults
+# to 'ease-out' for Zepto and 'swing' for jQuery.
+easing: if Zepto? then 'ease-out' else 'swing'
+
+# If true, animations will act on the 'transform'
+# properties rather than 'right' or 'left'. Defaults
+# to 'true' for Zepto.
+useTransformProps: Zepto?
+
+# When 'true', 3D transforms will be used. Can sometimes
+# improve performance. 'true' by default if Modernizr and
+# the 'csstransforms3d' test are included.
+use3D: Modernizr? and Modernizr.csstransforms3d
+
+# The CSS prefix to use for the 'transform' property.
+# Defaults to the one the framework is using (if any).
+cssPrefix: if $.fx.cssPrefix? then $.fx.cssPrefix else ''
+
+# If 'true', the height of the container will be resized
+# to match the height of the active view (both initially
+# and as the views change. You should set to 'false' if
+# your container's height is fixed.
+resizeHeight: true
+
+# Duration of the height animations when 'resizeHeight'
+# is true. If 'null', the value of the duration option
+# will be used.
+heightDuration: null
+
+# If 'true', the resizeHeight animation will occur after
+# the rest of the view change has finished. (Having too
+# many CSS animations happening at once sometimes affects
+# performance.) 'true' for Zepto, 'false' otherwise.
+deferHeightChange: Zepto?
+
+# Scroll to the top of the window or container (see
+# scrollToContainer) when a view change begins. If this is
+# a string, the plugin will try to scroll to the position
+# using a plugin with that name. If 'true', the scroll
+# will snap to that position without animation.
+scrollOnStart: if $.scrollTo? then 'scrollTo' else false
+
+# If 'true', the scroll will move to the top of the
+# container. If 'false', the top of the window will
+# be used.
+scrollToContainerTop: true
+
+# The event that the magic data-attribute events will
+# be bound to. If 'false', no events will be bound.
+dataAttrEvent: 'click'
+
+# The names of the data attributes to use for the magic
+# event bindings.
+dataAttr:
+  push: 'pushview'
+  pop: 'popview'
+
+# Class names that get added to the different elements as
+# the plugin does its thing. These have no utility to the
+# plugin, they are merely for styling and convenience.
+classNames:
+  container: 'SimpleSlideView-container'
+  view: 'SimpleSlideView-view'
+  activeView: 'SimpleSlideView-view-active'
+
+# The names of the events that will trigger on the
+# container when a view change begins or ends.
+eventNames:
+  viewChangeStart: 'viewChangeStart'
+  viewChangeEnd: 'viewChangeEnd'
+```
+
+## Methods
+
+Save the output of the plugin to a variable if you intend to use methods:
+
+```javascript
+var slideView = $('.container').simpleSlideView();
+slideView.pushView('#view-2');
+```
+
+### on
+
+```javascript
+on()
+```
+
+Activates the plugin. You don't have to fire this unless you've set `deferOn` to `true` or if you've called `off()`.
+
+### off
+
+```javascript
+off()
+```
+
+Deactivates the plugin. We've done everything in our power to remove all traces of it from the DOM, but obviously you can activate it again using `on()`.
+
+### pushView and popView
+
+```javascript
+pushView(targetView)
+popView(targetView)
+```
+
+Will push or pop to `targetView`. This will get passed to `$`, so it can be whatever kind of selector jQuery or Zepto would accept.
+
+These are shortcut methods for...
+
+### changeView
+
+```javascript
+changeView(targetView, action)
+```
+
+This works the same as `pushView` or `popView`, accept it needs a value for `action` of either `'push'` or `'pop'`.
+
+## Events
+
+Two events will trigger on the view container at the beginning and end of a view change. By default the event names are `viewChangeStart` and `viewChangeEnd`.
+
+In addition to the usual `event` object, your callback can also receive the `targetView` and `action` properties the `changeView` function did:
+
+```javascript
+$('.container').on('viewChangeStart', function (event, targetView, action) {
+  console.log(targetView); // Whatever you or a magic method passed
+  console.log(action); // 'push' or 'pop'
+});
+```
+
+## Known issues and limitations
+
+## Building from source
