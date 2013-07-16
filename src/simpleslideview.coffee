@@ -66,6 +66,14 @@ defaults =
   # be used.
   scrollToContainerTop: true
 
+  # If 'true', the height of the viewport will never
+  # lower. If 'null', the value will be based on whether
+  # or not resizeHeight and scrollOnStart are both truthy.
+  # This is useful for avoiding odd animation in browsers
+  # that resize the viewport as they scroll, such as
+  # iOS Safari.
+  maintainViewportHeight: null
+
   # The event that the magic data-attribute events will
   # be bound to. If 'false', no events will be bound.
   dataAttrEvent: 'click'
@@ -107,7 +115,9 @@ outerWidth = (el) ->
 class SimpleSlideView
   constructor: (element, options) ->
     @options = $.extend true, {}, defaults, options
-    @options.heightDuration = @options.duration unless @options.heightDuration
+    @options.heightDuration = @options.duration unless @options.heightDuration?
+    @options.maintainViewportHeight = @options.resizeHeight and @options.scrollOnStart unless @options.maintainViewportHeight?
+    @options.maintainViewportHeight = false unless window.innerHeight?
     @$container = $ element
     @$views = if typeof @options.views is 'string' then @$container.find(@options.views) else $(@options.views)
     @$activeView =  if @options.activeView? then $(@options.activeView) else @$views.first()
@@ -121,6 +131,8 @@ class SimpleSlideView
     @$views.addClass @options.classNames.view
     @$activeView.addClass @options.classNames.activeView
     @$views.not(@$activeView).css 'display', 'none'
+    if @options.maintainViewportHeight
+      @lastViewportHeight = window.innerHeight
     if @options.dataAttrEvent?
       @$container.on @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']', (event) =>
         $el = $(event.currentTarget)
@@ -143,6 +155,8 @@ class SimpleSlideView
     @$container.removeClass @options.classNames.container
     @$views.removeClass @options.classNames.view + ' ' + @options.classNames.activeView
     @$views.css 'display', ''
+    if @options.maintainViewportHeight
+      $('html').css 'min-height', ''
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
@@ -156,14 +170,13 @@ class SimpleSlideView
     outAnimProps = {}
     inAnimProps = {}
     resetProps = ['left', 'position', 'top', 'width']
+    top = if @options.scrollOnStart and @options.scrollToContainerTop then @$container.position().top else 0
 
-    if @options.scrollOnStart
-      maxTop = if @options.scrollToContainerTop then @$container.position().top else 0
-      if $(window).scrollTop() > maxTop
-        if typeof @options.scrollOnStart is 'string' and $[@options.scrollOnStart]?
-          $[@options.scrollOnStart] maxTop, @options.duration
-        else
-          window.scrollTo 0, maxTop
+    if @options.scrollOnStart and $(window).scrollTop() > top
+      if typeof @options.scrollOnStart is 'string' and $[@options.scrollOnStart]?
+        $[@options.scrollOnStart] top, @options.duration
+      else
+        window.scrollTo 0, top
 
     @$container.css
       height: outerHeight @$container
@@ -197,6 +210,9 @@ class SimpleSlideView
 
     animateHeight = () =>
       if @options.resizeHeight
+        if @options.maintainViewportHeight and window.innerHeight > @lastViewportHeight
+          @lastViewportHeight = window.innerHeight
+          $('html').css 'min-height', (@lastViewportHeight + top) + 'px'
         @$container.animate
           height: outerHeight $targetView
           @options.heightDuration

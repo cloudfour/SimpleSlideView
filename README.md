@@ -181,6 +181,14 @@ scrollOnStart: if $.scrollTo? then 'scrollTo' else false
 # be used.
 scrollToContainerTop: true
 
+# If 'true', the height of the viewport will never
+# lower. If 'null', the value will be based on whether
+# or not resizeHeight and scrollOnStart are both truthy.
+# This is useful for avoiding odd animation in browsers
+# that resize the viewport as they scroll, such as
+# iOS Safari.
+maintainViewportHeight: null
+
 # The event that the magic data-attribute events will
 # be bound to. If 'false', no events will be bound.
 dataAttrEvent: 'click'
@@ -265,4 +273,24 @@ $('.container').on('viewChangeStart', function (event, targetView, action) {
 
 ## Known issues and limitations
 
+### Hashes and maintaining history
+
+There are entire libraries devoted to maintaining history with JavaScript. Frankly, the task seemed too large for this library to handle. If you have ideas for integrating history, please consider contributing to the project.
+
+### Multi-view transitions
+
+Some interfaces will animate _multiple_ views in a row if you pop a view far into its history. This isn't part of SimpleSlideView right now because we don't maintain history and we don't require views exist in any particular hierarchy we could infer history from.
+
+### Animation performance
+
+We've noticed that some pages perform better with CSS animations and some with JavaScript. Speaking broadly, pages with a _lot_ of complex or animating content tend to perform better with JS, while most other pages seem to perform better with CSS. We hope that by relying on the `$.animate` method and providing options for `useTransformProps` and `use3D` we've given you the ability to experiment with what works best for your project.
+
 ## Building from source
+
+SimpleSlideView is written in [CoffeeScript](http://coffeescript.org/). We've included a [Grunt](http://gruntjs.com/) config file to make it easy to contribute. With [node.js](http://gruntjs.com/) installed, `cd` to the project directory and follow these steps:
+
+1. Install the Grunt CLI (if you haven't already): `npm install -g grunt-cli`
+1. Install other dependencies: `npm install`
+1. Watch the source file for changes: `grunt`
+
+As you save `simpleslideview.coffee`, the Grunt task will compile and minify automatically. You can stop this by hitting `Ctrl+C`.
