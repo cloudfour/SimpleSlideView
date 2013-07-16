@@ -35,6 +35,10 @@
       padding: 0;
     }
 
+    h2 {
+      margin: 0.25em 0 0;
+    }
+
     p {
       -moz-hyphens: auto;
       -webkit-hyphens: auto;
@@ -108,12 +112,12 @@
       padding: 0;
     }
 
-    .view-nav:before,
-    .view-nav:after {
+    .clearfix:before,
+    .clearfix:after {
       content: " ";
       display: table;
     }
-    .view-nav:after {
+    .clearfix:after {
       clear: both;
     }
 
@@ -125,7 +129,7 @@
     .view-nav a {
       background-repeat: no-repeat;
       display: block;
-      padding: 0.75em 1em;
+      padding: 0.25em 1em;
       white-space: nowrap;
     }
 
@@ -153,7 +157,7 @@
       margin: 0;
     }
 
-    #nav li:last-child {
+    #nav.SimpleSlideView-view li:last-child {
       border-bottom-width: 0;
     }
 
@@ -175,6 +179,20 @@
       color: #fff;
       text-align: center;
     }
+
+    @media only screen and (min-width: 30.0625em) { /* 481px */
+      body {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 30.0625em;
+      }
+
+      .views {
+        border-radius: 0.5em;
+        border-width: 2px;
+      }
+    }
+
   </style>
   <script src="vendor/modernizr.custom.js"></script>
 </head>
@@ -200,7 +218,7 @@
       <h2>What it does</h2>
       <p>Sliding views let you present content in distinct, bite-sized chunks while maintaining hierarchy through the use of spacial animation. They look neat, too.</p>
       <p>There are many wonderful JavaScript frameworks out there that pull this off beautifully... but they can get kind of complicated. When your needs are simple or responsive, <b>SimpleSlideView</b> may do the trick.</p>
-      <ul class="view-nav">
+      <ul class="view-nav clearfix">
         <li><a href="#nav" data-popview>Contents</a></li>
         <li><a href="#how" data-pushview>How it works</a></li>
       </ul>
@@ -220,7 +238,7 @@
       <pre><code>$(myContainer).simpleSlideView();</code></pre>
       <p>...and bob&rsquo;s your uncle!</p>
       <p>Okay, there&rsquo;s a <em>little</em> more to it than that (especially if you want to customize a bunch of stuff). But not much.</p>
-      <ul class="view-nav">
+      <ul class="view-nav clearfix">
         <li><a href="#nav" data-popview>Contents</a></li>
         <li><a href="#where" data-pushview>Where to get it</a></li>
       </ul>
@@ -231,7 +249,7 @@
     <div class="view-content">
       <h2>Where to get it</h2>
       <p>All this (plus documentation and source files) can be yours <em>right now</em> thanks to the magic of GitHub and open source software. Isn&rsquo;t life great?</p>
-      <ul class="view-nav">
+      <ul class="view-nav clearfix">
         <li><a href="#nav" data-popview>Contents</a></li>
         <li><a class="btn" href="https://github.com/cloudfour/SimpleSlideView">View on GitHub</a></li>
       </ul>
