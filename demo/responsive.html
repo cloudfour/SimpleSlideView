@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-  <title>SimpleSlideView Demo (Simple)</title>
+  <title>SimpleSlideView Demo (Responsive)</title>
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/simple.css">
+  <link rel="stylesheet" href="css/responsive.css">
   <script src="../vendor/modernizr.custom.js"></script>
 </head>
 <body>
@@ -73,7 +73,7 @@
 
 <div class="island byline clearfix">
   <p class="pull-left">Made by <a href="http://cloudfour.com">Cloud Four</a></p>
-  <p class="pull-right"><a href="responsive.html">Responsive demo &raquo;</a></p>
+  <p class="pull-right"><a href="index.html">Simple demo &raquo;</a></p>
 </div>
 
 <script src="../vendor/fastclick.js"></script>
@@ -89,7 +89,21 @@ document.write(
 <script src="../lib/simpleslideview.min.js"></script>
 <script>
 
-$('.views').simpleSlideView({ duration: 250 });
+var $window = $(window)
+  , $viewContainer = $('.views')
+  , options = {
+      deferOn: ($window.width() >= 768),
+      duration: 250
+    }
+  , slideView = $viewContainer.simpleSlideView(options);
+
+$window.on('resize', function () {
+  if ($window.width() >= 768) {
+    slideView.off();
+  } else {
+    slideView.on();
+  }
+});
 
 </script>
 

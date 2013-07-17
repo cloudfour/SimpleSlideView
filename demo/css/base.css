@@ -22,7 +22,7 @@ a {
 
 h1 {
   font-size: 1.25em;
-  line-height: 1em;
+  line-height: 1.2em;
   margin: 0 0 0.5em;
   padding: 0;
 }
@@ -91,7 +91,13 @@ pre code {
 }
 
 .view {
+  border-bottom: 2px solid #ccc;
   margin: 0;
+}
+
+.view:last-child,
+.SimpleSlideView-view {
+  border-bottom-width: 0;
 }
 
 .view-content {
@@ -150,7 +156,7 @@ pre code {
   margin: 0;
 }
 
-#nav.SimpleSlideView-view li:last-child {
+#nav li:last-child {
   border-bottom-width: 0;
 }
 
@@ -171,6 +177,14 @@ pre code {
   border-radius: 0.25em;
   color: #fff;
   text-align: center;
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
 }
 
 @media only screen and (min-width: 30.0625em) { /* 481px */

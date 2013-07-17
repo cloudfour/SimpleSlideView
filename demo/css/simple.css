@@ -1,0 +1,11 @@
+@media only screen and (min-width: 30.0625em) { /* 481px */
+  body {
+    margin: 1.5em auto;
+    max-width: 30.0625em;
+  }
+
+  .views {
+    border-radius: 0.5em;
+    border-width: 2px;
+  }
+}
