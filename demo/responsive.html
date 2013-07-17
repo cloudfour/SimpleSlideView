@@ -11,29 +11,29 @@
 </head>
 <body>
 
-<div class="island">
+<div class="island masthead">
   <h1>SimpleSlideView</h1>
   <p>A nifty little <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a> plugin for the simplest of sliding views.</p>
 </div>
 
-<div class="views">
+<div class="views clearfix">
 
   <div class="view" id="nav">
     <ul>
-      <li><a href="#what" data-pushview>What it does</a></li>
+      <li><a class="is-active" href="#what" data-pushview>What it does</a></li>
       <li><a href="#how" data-pushview>How it works</a></li>
       <li><a href="#where" data-pushview>Where to get it</a></li>
     </ul>
   </div>
 
-  <div class="view" id="what">
+  <div class="view is-active" id="what">
     <div class="view-content">
       <h2>What it does</h2>
       <p>Sliding views let you present content in distinct, bite-sized chunks while maintaining hierarchy through the use of spacial animation. They look neat, too.</p>
       <p>There are many wonderful JavaScript frameworks out there that pull this off beautifully... but they can get kind of complicated. When your needs are simple or responsive, <b>SimpleSlideView</b> may do the trick.</p>
       <ul class="view-nav clearfix">
-        <li><a href="#nav" data-popview>Contents</a></li>
-        <li><a href="#how" data-pushview>How it works</a></li>
+        <li class="view-nav-contents"><a href="#nav" data-popview>Contents</a></li>
+        <li class="view-nav-next"><a href="#how" data-pushview>How it works</a></li>
       </ul>
     </div>
   </div>
@@ -52,8 +52,8 @@
       <p>...and bob&rsquo;s your uncle!</p>
       <p>Okay, there&rsquo;s a <em>little</em> more to it than that (especially if you want to customize a bunch of stuff). But not much.</p>
       <ul class="view-nav clearfix">
-        <li><a href="#nav" data-popview>Contents</a></li>
-        <li><a href="#where" data-pushview>Where to get it</a></li>
+        <li class="view-nav-contents"><a href="#nav" data-popview>Contents</a></li>
+        <li class="view-nav-next"><a href="#where" data-pushview>Where to get it</a></li>
       </ul>
     </div>
   </div>
@@ -63,8 +63,8 @@
       <h2>Where to get it</h2>
       <p>All this (plus documentation and source files) can be yours <em>right now</em> thanks to the magic of GitHub and open source software. Isn&rsquo;t life great?</p>
       <ul class="view-nav clearfix">
-        <li><a href="#nav" data-popview>Contents</a></li>
-        <li><a class="btn" href="https://github.com/cloudfour/SimpleSlideView">View on GitHub</a></li>
+        <li class="view-nav-contents"><a href="#nav" data-popview>Contents</a></li>
+        <li class="view-nav-next"><a class="btn" href="https://github.com/cloudfour/SimpleSlideView">View on GitHub</a></li>
       </ul>
     </div>
   </div>
@@ -97,13 +97,32 @@ var $window = $(window)
     }
   , slideView = $viewContainer.simpleSlideView(options);
 
-$window.on('resize', function () {
+function layoutDependencies() {
+  console.log('hullo');
   if ($window.width() >= 768) {
     slideView.off();
+    $('a[data-pushview]').on('click', function (event) {
+      var href = $(this).attr('href')
+        , $target = $(href)
+        , $nav;
+      if ($target.length) {
+        event.preventDefault();
+        $target.addClass('is-active');
+        $nav = $('#nav');
+        $nav.find('.is-active').removeClass('is-active');
+        $nav.find('[href="' + href + '"]').addClass('is-active');
+        $target.siblings().removeClass('is-active');
+      }
+    });
   } else {
+    $('a[data-pushview]').off('click');
     slideView.on();
   }
-});
+}
+
+$window.on('resize', layoutDependencies);
+
+layoutDependencies();
 
 </script>
 
