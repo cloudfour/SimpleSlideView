@@ -95,34 +95,35 @@ var $window = $(window)
       deferOn: ($window.width() >= 768),
       duration: 250
     }
-  , slideView = $viewContainer.simpleSlideView(options);
+  , slideView;
 
-function layoutDependencies() {
-  console.log('hullo');
+$viewContainer.on('slideViewDeferred slideViewOff', function () {
+  $('a[data-pushview]').on('click', function (event) {
+    var href = $(this).attr('href')
+      , $target = $(href)
+      , $nav;
+    if ($target.length) {
+      event.preventDefault();
+      $target.addClass('is-active');
+      $nav = $('#nav');
+      $nav.find('.is-active').removeClass('is-active');
+      $nav.find('[href="' + href + '"]').addClass('is-active');
+      $target.siblings().removeClass('is-active');
+    }
+  });
+}).on('slideViewBeforeOn', function () {
+  $('a[data-pushview]').off('click');
+});
+
+slideView = $viewContainer.simpleSlideView(options);
+
+$window.on('resize', function(){
   if ($window.width() >= 768) {
     slideView.off();
-    $('a[data-pushview]').on('click', function (event) {
-      var href = $(this).attr('href')
-        , $target = $(href)
-        , $nav;
-      if ($target.length) {
-        event.preventDefault();
-        $target.addClass('is-active');
-        $nav = $('#nav');
-        $nav.find('.is-active').removeClass('is-active');
-        $nav.find('[href="' + href + '"]').addClass('is-active');
-        $target.siblings().removeClass('is-active');
-      }
-    });
   } else {
-    $('a[data-pushview]').off('click');
     slideView.on();
   }
-}
-
-$window.on('resize', layoutDependencies);
-
-layoutDependencies();
+});
 
 </script>
 

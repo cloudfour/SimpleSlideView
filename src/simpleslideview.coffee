@@ -95,6 +95,11 @@ defaults =
   # The names of the events that will trigger on the
   # container when a view change begins or ends.
   eventNames:
+    on: 'slideViewOn'
+    off: 'slideViewOff'
+    beforeOn: 'slideViewBeforeOn'
+    beforeOff: 'slideViewBeforeOff'
+    deferred: 'slideViewDeferred'
     viewChangeStart: 'viewChangeStart'
     viewChangeEnd: 'viewChangeEnd'
 
@@ -122,10 +127,14 @@ class SimpleSlideView
     @$views = if typeof @options.views is 'string' then @$container.find(@options.views) else $(@options.views)
     @$activeView =  if @options.activeView? then $(@options.activeView) else @$views.first()
     @isActive = false
-    @on() unless @options.deferOn
+    if @options.deferOn
+      @$container.trigger @options.eventNames.deferred
+    else
+      @on()
 
   on: () ->
     return if @isActive
+    @$container.trigger @options.eventNames.beforeOn
     @isActive = true
     @$container.addClass @options.classNames.container
     @$views.addClass @options.classNames.view
@@ -148,9 +157,11 @@ class SimpleSlideView
         if target.length
           event.preventDefault()
           @popView target
+    @$container.trigger @options.eventNames.on
 
   off: () ->
     return unless @isActive
+    @$container.trigger @options.eventNames.beforeOff
     @isActive = false
     @$container.removeClass @options.classNames.container
     @$views.removeClass @options.classNames.view + ' ' + @options.classNames.activeView
@@ -160,6 +171,7 @@ class SimpleSlideView
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
+    @$container.trigger @options.eventNames.off
 
   changeView: (targetView, action = 'push') ->
     eventArgs = [targetView, action]

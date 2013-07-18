@@ -260,9 +260,11 @@ This works the same as `pushView` or `popView`, accept it needs a value for `act
 
 ## Events
 
-Two events will trigger on the view container at the beginning and end of a view change. By default the event names are `viewChangeStart` and `viewChangeEnd`.
+These are triggered on the containing element. All event names can be customized using the `eventNames` option.
 
-In addition to the usual `event` object, your callback can also receive the `targetView` and `action` properties the `changeView` function did:
+### viewChangeStart and viewChangeEnd
+
+Triggered at the start and end of any view change (push or pop). In addition to the usual `event` object, your callback can also receive the `targetView` and `action` arguments the `changeView` function did:
 
 ```javascript
 $('.container').on('viewChangeStart', function (event, targetView, action) {
@@ -270,6 +272,18 @@ $('.container').on('viewChangeStart', function (event, targetView, action) {
   console.log(action); // 'push' or 'pop'
 });
 ```
+
+### slideViewOn and slideViewOff
+
+These events are triggered when the plugin is activated or deactivated. This can be useful if you want to use the plugin in some layouts but not others. You can see an example of this in [the responsive demo]().
+
+### slideViewBeforeOn and slideViewBeforeOff
+
+Similar to the "on" and "off" events, except they are triggered _before_ the plugin begins to be activated or deactivated. See [the responsive demo]() for an example.
+
+### slideViewDeferred
+
+Triggered if the plugin is initialized but `deferOn` is truthy. See [the responsive demo]() for an example.
 
 ## Known issues and limitations
 
