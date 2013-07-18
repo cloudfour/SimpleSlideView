@@ -18,82 +18,33 @@
     background-color: #fff;
     border: 2px solid #ccc;
     border-radius: 0.5em;
-    display: none;
-    margin-left: 27%;
   }
 
-  .view:last-child {
-    border-bottom-width: 2px;
-  }
-
-  #nav,
-  .view.is-active {
-    display: block;
-  }
-
-  #nav {
+  .views-nav {
     float: left;
-    margin-left: 0;
     width: 25%;
   }
 
-  #nav a {
+  .views-nav a {
     background-image: none;
   }
 
-  #nav a.is-active {
+  .views-nav a.is-active {
     background-image: url(../img/arrow-right.svg);
     color: #999;
   }
 
-  .view-nav-contents {
+  .views-main .view {
     display: none;
+    margin-left: 27%;
   }
 
-  .view-nav li {
-    width: 100%;
-  }
-
-/*  .byline {
-    text-align: right;
-  }
-
-  .byline p {
-    display: inline;
-    float: none;
-  }*/
-
-/*  .view,
-  .view:last-child {
-    background-color: #fff;
-    border: 2px solid #ccc;
-    border-radius: 0 0.5em 0.5em 0.5em;
-    margin-left: 25%;
-  }
-
-  #nav {
-    border-right-width: 0;
-    border-radius: 0.5em 0 0 0.5em;
-    float: left;
-    margin-left: 0;
-    width: 25%;
-  }
-
-  .view-nav-contents {
-    display: none;
-  }
-
-  .view-nav li {
-    width: 100%;
-  }
-
-  .view {
-    display: none;
-  }
-
-  .is-active,
-  #nav {
+  .views-main .view.is-active {
     display: block;
-  }*/
+  }
+
+  .view-nav-contents {
+    display: none;
+  }
 
 }

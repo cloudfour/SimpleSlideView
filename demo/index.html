@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <title>SimpleSlideView Demo (Basic)</title>
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/simple.css">
   <script src="../vendor/modernizr.custom.js"></script>
 </head>
 <body>
@@ -18,7 +17,7 @@
 
 <div class="views">
 
-  <div class="view" id="nav">
+  <div class="view views-nav" id="nav">
     <ul>
       <li><a href="#what" data-pushview>What it does</a></li>
       <li><a href="#how" data-pushview>How it works</a></li>
@@ -26,47 +25,51 @@
     </ul>
   </div>
 
-  <div class="view" id="what">
-    <div class="view-content">
-      <h2>What it does</h2>
-      <p>Sliding views let you present content in distinct, bite-sized chunks while maintaining hierarchy through the use of spacial animation. They look neat, too.</p>
-      <p>There are many wonderful JavaScript frameworks out there that pull this off beautifully... but they can get kind of complicated. When your needs are simple or responsive, <b>SimpleSlideView</b> may do the trick.</p>
-      <ul class="view-nav clearfix">
-        <li><a href="#nav" data-popview>Contents</a></li>
-        <li><a href="#how" data-pushview>How it works</a></li>
-      </ul>
-    </div>
-  </div>
+  <div class="views-main">
 
-  <div class="view" id="how">
-    <div class="view-content">
-      <h2>How it works</h2>
-      <p>The plugin only needs a few ingredients to work:</p>
-      <ul>
-        <li>Either <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a>.</li>
-        <li>A containing element.</li>
-        <li>Some special <code>data-pushview</code> and <code>data-popview</code> attributes on elements you want to trigger slides.</li>
-      </ul>
-      <p>Then call...</p>
-      <pre><code>$(myContainer).simpleSlideView();</code></pre>
-      <p>...and bob&rsquo;s your uncle!</p>
-      <p>Okay, there&rsquo;s a <em>little</em> more to it than that (especially if you want to customize a bunch of stuff). But not much.</p>
-      <ul class="view-nav clearfix">
-        <li><a href="#nav" data-popview>Contents</a></li>
-        <li><a href="#where" data-pushview>Where to get it</a></li>
-      </ul>
+    <div class="view" id="what">
+      <div class="view-content">
+        <h2>What it does</h2>
+        <p>Sliding views let you present content in distinct, bite-sized chunks while maintaining hierarchy through the use of spacial animation. They look neat, too.</p>
+        <p>There are many wonderful JavaScript frameworks out there that pull this off beautifully... but they can get kind of complicated. When your needs are simple or responsive, <b>SimpleSlideView</b> may do the trick.</p>
+        <ul class="view-nav clearfix">
+          <li class="view-nav-contents pull-left"><a href="#nav" data-popview>Contents</a></li>
+          <li class="view-nav-next pull-right"><a href="#how" data-pushview>How it works</a></li>
+        </ul>
+      </div>
     </div>
-  </div>
 
-  <div class="view" id="where">
-    <div class="view-content">
-      <h2>Where to get it</h2>
-      <p>All this (plus documentation and source files) can be yours <em>right now</em> thanks to the magic of GitHub and open source software. Isn&rsquo;t life great?</p>
-      <ul class="view-nav clearfix">
-        <li><a href="#nav" data-popview>Contents</a></li>
-        <li><a class="btn" href="https://github.com/cloudfour/SimpleSlideView">View on GitHub</a></li>
-      </ul>
+    <div class="view" id="how">
+      <div class="view-content">
+        <h2>How it works</h2>
+        <p>The plugin only needs a few ingredients to work:</p>
+        <ul>
+          <li>Either <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a>.</li>
+          <li>A containing element.</li>
+          <li>Some special <code>data-pushview</code> and <code>data-popview</code> attributes on elements you want to trigger slides.</li>
+        </ul>
+        <p>Then call...</p>
+        <pre><code>$(myContainer).simpleSlideView();</code></pre>
+        <p>...and bob&rsquo;s your uncle!</p>
+        <p>Okay, there&rsquo;s a <em>little</em> more to it than that (especially if you want to customize a bunch of stuff). But not much.</p>
+        <ul class="view-nav clearfix">
+          <li class="view-nav-contents pull-left"><a href="#nav" data-popview>Contents</a></li>
+          <li class="view-nav-next pull-right"><a href="#where" data-pushview>Where to get it</a></li>
+        </ul>
+      </div>
     </div>
+
+    <div class="view" id="where">
+      <div class="view-content">
+        <h2>Where to get it</h2>
+        <p>All this (plus documentation and source files) can be yours <em>right now</em> thanks to the magic of GitHub and open source software. Isn&rsquo;t life great?</p>
+        <ul class="view-nav clearfix">
+          <li class="view-nav-contents pull-left"><a href="#nav" data-popview>Contents</a></li>
+          <li class="pull-right"><a class="btn" href="https://github.com/cloudfour/SimpleSlideView">View on GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+
   </div>
 
 </div>
