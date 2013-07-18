@@ -3,7 +3,8 @@
 A nifty little jQuery or Zepto plugin for the simplest of sliding views.
 
 * [Explanatory blog post]()
-* [Check out a demo]()
+* [Basic demo]()
+* [Responsive demo]()
 
 ## Dependencies
 
@@ -101,6 +102,8 @@ $(window).on('resize', function(){
   }
 });
 ```
+
+See [the responsive demo]() for a more in-depth example.
 
 ## Options
 
