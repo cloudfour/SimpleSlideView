@@ -90,12 +90,12 @@ By default, SimpleSlideView will activate itself when initialized, but you can d
 ```javascript
 var slideView = $('.container').simpleSlideView({
   // Do not activate unless the viewport is larger than 768pt
-  deferOn: ($(window).width() > 768)
+  deferOn: ($(window).width() >= 768)
 });
 
 // Turn on/off if window size changes
 $(window).on('resize', function(){
-  if ($(window).width() > 768) {
+  if ($(window).width() >= 768) {
     slideView.off();
   } else {
     slideView.on();

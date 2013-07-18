@@ -1,5 +1,7 @@
 * {
+   /* Makes life easier and makes width/height values more predictable for Zepto */
   box-sizing: border-box;
+  /* Removes the transparent black box around things when tapped on iOS */
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
@@ -117,6 +119,7 @@ pre code {
   border-top: 2px solid #ccc;
 }
 
+/* When SimpleSlideView is active we won't need a border anymore */
 .views-main .SimpleSlideView-view {
   border-top-width: 0;
 }

@@ -7,6 +7,7 @@
   <title>SimpleSlideView Demo (Responsive)</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <!-- including this will automatically enable 3D transforms where supported -->
   <script src="../vendor/modernizr.custom.js"></script>
 </head>
 <body>
@@ -20,6 +21,12 @@
 
   <div class="view views-nav" id="nav">
     <ul>
+      <!--
+        Because these anchors resolve to actual elements, we don't have to
+        provide a value for the 'data-pushview' or 'data-popview' attributes.
+        This is extra-nifty because it means our page will be functional
+        even if JavaScript fails to load or is disabled.
+        -->
       <li><a class="is-active" href="#what" data-pushview>What it does</a></li>
       <li><a href="#how" data-pushview>How it works</a></li>
       <li><a href="#where" data-pushview>Where to get it</a></li>
@@ -80,8 +87,14 @@
   <p class="pull-right"><a href="index.html">Basic demo &raquo;</a></p>
 </div>
 
+<!-- this library removes the 300ms delay on browsers with touch UIs -->
 <script src="../vendor/fastclick.js"></script>
+
 <script>
+// "Zepto is a minimalist JavaScript library for modern browsers with a
+// largely jQuery-compatible API." What this chunk of code does is
+// determine which library to use (jQuery or Zepto), and then which
+// scroll plugin to use. For more info, see http://zeptojs.com/#download
 var useZepto = ('__proto__' in {})
   , lib = useZepto ? 'zepto' : 'jquery'
   , scrollPlugin = useZepto ? 'scroll' : 'scrollTo';
@@ -90,45 +103,87 @@ document.write(
   '<script src=../vendor/' + lib + '.' + scrollPlugin + '.min.js><\/script>'
 );
 </script>
+
+<!-- including the (minified) plugin, because duh -->
 <script src="../lib/simpleslideview.min.js"></script>
+
 <script>
 
-var $window = $(window)
-  , $viewContainer = $('.views')
-  , options = {
+// This is a more complex example. In this case, we want to use a
+// sliding view for layouts smaller than 768 px/pt, but a different
+// type of navigation for larger layouts.
+
+// First, let's define the variables we'll need and the initial
+// values of whichever ones we can right now.
+
+var $window = $(window) // For viewport width and resizing
+  , $viewContainer = $('.views') // Our view container
+  , options = { // SimpleSlideView plugin options
+      // If the viewport is currently 768px or wider, do not
+      // activate the plugin immediately. Otherwise, go for it!
       deferOn: ($window.width() >= 768),
-      duration: 250
+      duration: 250 // Animation duration
     }
-  , slideView;
+  , slideView; // We wait to initialize the plugin
 
-$viewContainer.on('slideViewDeferred slideViewOff', function () {
-  $('a[data-pushview]').on('click', function (event) {
-    var href = $(this).attr('href')
-      , $target = $(href)
-      , $nav;
-    if ($target.length) {
-      event.preventDefault();
-      $target.addClass('is-active');
-      $nav = $('#nav');
-      $nav.find('.is-active').removeClass('is-active');
-      $nav.find('[href="' + href + '"]').addClass('is-active');
-      $target.siblings().removeClass('is-active');
-    }
+// Next, we bind some events to the view container. This will
+// let us change the behavior of the page depending on whether
+// or not the plugin is activated or deactivated.
+
+// We're binding these events _before_ we initialize the plugin
+// because otherwise we can't detect the 'slideViewDeferred'
+// event, which is only fired when the plugin is first initialized.
+
+$viewContainer
+  // This function is called if the plugin is initialized but
+  // not activated immediately, or if the plugin is turned off.
+  .on('slideViewDeferred slideViewOff', function () {
+    // Really barebones "tab" interface for when sliding views
+    // are turned off. I would not recommend using this outside
+    // the context of this demo... consider it a placeholder for
+    // "your large layout logic here".
+    $('a[data-pushview]').on('click', function (event) {
+      var href = $(this).attr('href')
+        , $target = $(href)
+        , $nav;
+      if ($target.length) {
+        event.preventDefault();
+        $target.addClass('is-active');
+        $nav = $('#nav');
+        $nav.find('.is-active').removeClass('is-active');
+        $nav.find('[href="' + href + '"]').addClass('is-active');
+        $target.siblings().removeClass('is-active');
+      }
+    });
+  })
+  // This is called when the plugin is _about_ to activate.
+  .on('slideViewBeforeOn', function () {
+    // Remove the event we bound to these elements in the
+    // previous function so that SimpleSlideView can use
+    // them without conflicts.
+    $('a[data-pushview]').off('click');
   });
-}).on('slideViewBeforeOn', function () {
-  $('a[data-pushview]').off('click');
-});
 
+// Now that we've bound our events, we're ready to initialize
+// the plugin! Yay!
+
+// We are storing it to the 'slideView' variable we created
+// earlier. This will let us use the plugin's methods, which
+// we'll need to activate/deactivate it if the window size
+// changes.
 slideView = $viewContainer.simpleSlideView(options);
 
+// Finally, we bind a function to the window's 'resize' event
+// so that we can turn the plugin on and off if/when the size
+// of the window changes.
 $window.on('resize', function(){
-  if ($window.width() >= 768) {
-    slideView.off();
-  } else {
-    slideView.on();
-  }
+  ($window.width() >= 768) ? slideView.off() : slideView.on();
 });
 
+// For the sake of simplicity, this demo uses the window size
+// to determine the state of the plugin. When used in production,
+// I recommend basing this off of the behavior of elements instead.
+// See: http://blog.cloudfour.com/behavioral-breakpoints/
 </script>
 
 </body>

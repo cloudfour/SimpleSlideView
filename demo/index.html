@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <title>SimpleSlideView Demo (Basic)</title>
   <link rel="stylesheet" href="css/base.css">
+  <!-- including this will automatically enable 3D transforms where supported -->
   <script src="../vendor/modernizr.custom.js"></script>
 </head>
 <body>
@@ -19,6 +20,13 @@
 
   <div class="view views-nav" id="nav">
     <ul>
+
+      <!--
+        Because these anchors resolve to actual elements, we don't have to
+        provide a value for the 'data-pushview' or 'data-popview' attributes.
+        This is extra-nifty because it means our page will be functional
+        even if JavaScript fails to load or is disabled.
+        -->
       <li><a href="#what" data-pushview>What it does</a></li>
       <li><a href="#how" data-pushview>How it works</a></li>
       <li><a href="#where" data-pushview>Where to get it</a></li>
@@ -79,8 +87,14 @@
   <p class="pull-right"><a href="responsive.html">Responsive demo &raquo;</a></p>
 </div>
 
+<!-- this library removes the 300ms delay on browsers with touch UIs -->
 <script src="../vendor/fastclick.js"></script>
+
 <script>
+// "Zepto is a minimalist JavaScript library for modern browsers with a
+// largely jQuery-compatible API." What this chunk of code does is
+// determine which library to use (jQuery or Zepto), and then which
+// scroll plugin to use. For more info, see http://zeptojs.com/#download
 var useZepto = ('__proto__' in {})
   , lib = useZepto ? 'zepto' : 'jquery'
   , scrollPlugin = useZepto ? 'scroll' : 'scrollTo';
@@ -89,11 +103,16 @@ document.write(
   '<script src=../vendor/' + lib + '.' + scrollPlugin + '.min.js><\/script>'
 );
 </script>
+
+<!-- including the (minified) plugin, because duh -->
 <script src="../lib/simpleslideview.min.js"></script>
+
 <script>
-
+// Here is a very basic implementation. '.views' will be
+// the view container, any elements therein with a class of
+// 'view' will be a view, and the only default option we're
+// overriding is the duration of the animations.
 $('.views').simpleSlideView({ duration: 250 });
-
 </script>
 
 </body>
