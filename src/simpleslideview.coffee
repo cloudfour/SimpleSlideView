@@ -92,8 +92,8 @@ defaults =
     view: 'SimpleSlideView-view'
     activeView: 'SimpleSlideView-view-active'
 
-  # The names of the events that will trigger on the
-  # container when a view change begins or ends.
+  # Names of events that will get triggered. See the
+  # README for more info.
   eventNames:
     on: 'slideViewOn'
     off: 'slideViewOff'
