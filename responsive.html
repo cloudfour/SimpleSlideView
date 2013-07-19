@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/responsive.css">
   <!-- including this will automatically enable 3D transforms where supported -->
-  <script src="../vendor/modernizr.custom.js"></script>
+  <script src="vendor/modernizr.custom.js"></script>
 </head>
 <body>
 
@@ -88,7 +88,7 @@
 </div>
 
 <!-- this library removes the 300ms delay on browsers with touch UIs -->
-<script src="../vendor/fastclick.js"></script>
+<script src="vendor/fastclick.js"></script>
 
 <script>
 // "Zepto is a minimalist JavaScript library for modern browsers with a
@@ -99,13 +99,13 @@ var useZepto = ('__proto__' in {})
   , lib = useZepto ? 'zepto' : 'jquery'
   , scrollPlugin = useZepto ? 'scroll' : 'scrollTo';
 document.write(
-  '<script src=../vendor/' + lib + '.min.js><\/script>' +
-  '<script src=../vendor/' + lib + '.' + scrollPlugin + '.min.js><\/script>'
+  '<script src=vendor/' + lib + '.min.js><\/script>' +
+  '<script src=vendor/' + lib + '.' + scrollPlugin + '.min.js><\/script>'
 );
 </script>
 
 <!-- including the (minified) plugin, because duh -->
-<script src="../lib/simpleslideview.min.js"></script>
+<script src="lib/simpleslideview.min.js"></script>
 
 <script>
 
