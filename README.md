@@ -3,8 +3,8 @@
 A nifty little jQuery or Zepto plugin for the simplest of sliding views.
 
 * [Explanatory blog post]()
-* [Basic demo]()
-* [Responsive demo]()
+* [Basic demo](http://cloudfour.github.io/SimpleSlideView)
+* [Responsive demo](http://cloudfour.github.io/SimpleSlideView/responsive.html)
 
 ## Dependencies
 
@@ -103,7 +103,7 @@ $(window).on('resize', function(){
 });
 ```
 
-See [the responsive demo]() for a more in-depth example.
+See [the responsive demo](http://cloudfour.github.io/SimpleSlideView/responsive.html) for a more in-depth example.
 
 ## Options
 
@@ -278,15 +278,15 @@ $('.container').on('viewChangeStart', function (event, targetView, action) {
 
 ### slideViewOn and slideViewOff
 
-These events are triggered when the plugin is activated or deactivated. This can be useful if you want to use the plugin in some layouts but not others. You can see an example of this in [the responsive demo]().
+These events are triggered when the plugin is activated or deactivated. This can be useful if you want to use the plugin in some layouts but not others. You can see an example of this in [the responsive demo](http://cloudfour.github.io/SimpleSlideView/responsive.html).
 
 ### slideViewBeforeOn and slideViewBeforeOff
 
-Similar to the "on" and "off" events, except they are triggered _before_ the plugin begins to be activated or deactivated. See [the responsive demo]() for an example.
+Similar to the "on" and "off" events, except they are triggered _before_ the plugin begins to be activated or deactivated. See [the responsive demo](http://cloudfour.github.io/SimpleSlideView/responsive.html) for an example.
 
 ### slideViewDeferred
 
-Triggered if the plugin is initialized but `deferOn` is truthy. See [the responsive demo]() for an example.
+Triggered if the plugin is initialized but `deferOn` is truthy. See [the responsive demo](http://cloudfour.github.io/SimpleSlideView/responsive.html) for an example.
 
 ## Known issues and limitations
 
