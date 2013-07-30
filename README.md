@@ -2,7 +2,7 @@
 
 A nifty little jQuery or Zepto plugin for the simplest of sliding views.
 
-* [Explanatory blog post]()
+* [Explanatory blog post](http://blog.cloudfour.com/simpleslideview/)
 * [Basic demo](http://cloudfour.github.io/SimpleSlideView)
 * [Responsive demo](http://cloudfour.github.io/SimpleSlideView/responsive.html)
 
