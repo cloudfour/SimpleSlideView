@@ -227,29 +227,17 @@ var slideView = $('.container').simpleSlideView();
 slideView.pushView('#view-2');
 ```
 
-### on
+### on, off and toggle
 
 ```javascript
 on()
-```
-
-Activates the plugin. You don't have to fire this unless you've set `deferOn` to `true` or if you've called `off()`.
-
-### off
-
-```javascript
 off()
-```
-
-Deactivates the plugin. We've done everything in our power to remove all traces of it from the DOM, but obviously you can activate it again using `on()`.
-
-### toggle
-
-```javascript
 toggle(activate)
 ```
 
-Without arguments, `toggle` will call `on()` if the plugin is off and `off()` if the plugin is on. You can also pass a boolean value (`true` for `on`).
+These methods activate or deactivate the plugin. You don't have to fire `on()` unless you've set `deferOn` to `true` or you've called `off()` or `toggle()`.
+
+Without arguments, `toggle()` will call `on()` if the plugin is off and `off()` if the plugin is on. You can also pass a boolean value (`true` for `on`).
 
 ### pushView and popView
 
