@@ -177,7 +177,7 @@ slideView = $viewContainer.simpleSlideView(options);
 // so that we can turn the plugin on and off if/when the size
 // of the window changes.
 $window.on('resize', function(){
-  ($window.width() >= 768) ? slideView.off() : slideView.on();
+  slideView.toggle($window.width() < 768);
 });
 
 // For the sake of simplicity, this demo uses the window size

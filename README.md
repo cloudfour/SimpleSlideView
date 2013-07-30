@@ -83,7 +83,7 @@ See methods for more info.
 
 ## Getting responsive
 
-A sliding view isn't always appropriate when the viewport can show more content. Luckily, you can turn SimpleSlideView off and on whenever it makes sense for your project using the `on` and `off` methods.
+A sliding view isn't always appropriate when the viewport can show more content. Luckily, you can turn SimpleSlideView off and on whenever it makes sense for your project using the `toggle`, `on` and `off` methods.
 
 By default, SimpleSlideView will activate itself when initialized, but you can disable this by setting the `deferOn` option to `true`. An example:
 
@@ -95,11 +95,7 @@ var slideView = $('.container').simpleSlideView({
 
 // Turn on/off if window size changes
 $(window).on('resize', function(){
-  if ($(window).width() >= 768) {
-    slideView.off();
-  } else {
-    slideView.on();
-  }
+  slideView.toggle($(window).width() < 768);
 });
 ```
 
@@ -246,6 +242,14 @@ off()
 ```
 
 Deactivates the plugin. We've done everything in our power to remove all traces of it from the DOM, but obviously you can activate it again using `on()`.
+
+### toggle
+
+```javascript
+toggle(activate)
+```
+
+Without arguments, `toggle` will call `on()` if the plugin is off and `off()` if the plugin is on. You can also pass a boolean value (`true` for `on`).
 
 ### pushView and popView
 

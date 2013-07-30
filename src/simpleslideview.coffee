@@ -173,6 +173,10 @@ class SimpleSlideView
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
     @$container.trigger @options.eventNames.off
 
+  toggle: (activate = !@isActive) ->
+    return @on() if activate
+    return @off()
+
   changeView: (targetView, action = 'push') ->
     eventArgs = [targetView, action]
     @$container.trigger @options.eventNames.viewChangeStart, eventArgs
