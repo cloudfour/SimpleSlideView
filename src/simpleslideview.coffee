@@ -74,6 +74,9 @@ defaults =
   # iOS Safari.
   maintainViewportHeight: null
 
+  # WIP!
+  useHistoryJS: false
+
   # The event that the magic data-attribute events will
   # be bound to. If 'false', no events will be bound.
   dataAttrEvent: 'click'

@@ -100,6 +100,7 @@ var useZepto = ('__proto__' in {})
   , scrollPlugin = useZepto ? 'scroll' : 'scrollTo';
 document.write(
   '<script src=vendor/' + lib + '.min.js><\/script>' +
+  '<script src=vendor/' + lib + '.history.js><\/script>' +
   '<script src=vendor/' + lib + '.' + scrollPlugin + '.min.js><\/script>'
 );
 </script>
@@ -112,7 +113,7 @@ document.write(
 // the view container, any elements therein with a class of
 // 'view' will be a view, and the only default option we're
 // overriding is the duration of the animations.
-$('.views').simpleSlideView({ duration: 250 });
+$('.views').simpleSlideView({ duration: 250, useHistoryJS: true });
 </script>
 
 </body>
