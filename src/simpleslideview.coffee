@@ -1,5 +1,8 @@
 $ = if jQuery? then jQuery else Zepto
 
+$window = $ window
+$html = $ 'html'
+
 defaults =
   # The default view selector. An object will be a
   # jQuery or Zepto object, a string will be used
@@ -138,7 +141,9 @@ class SimpleSlideView
   on: () ->
     return if @isActive
     @$container.trigger @options.eventNames.beforeOn
+    @queue = []
     @isActive = true
+    @isSliding = false
     @$container.addClass @options.classNames.container
     @$views.addClass @options.classNames.view
     @$activeView.addClass @options.classNames.activeView
@@ -163,7 +168,7 @@ class SimpleSlideView
     if @options.useHistory
       @historyID = 0
       History.replaceState { id: @historyID, viewIndex: @$views.index(@$activeView) }, null, ''
-      $(window).on 'statechange', () =>
+      $window.on 'statechange', () =>
         state = History.getState()
         @changeView @$views.get(state.data.viewIndex), (if state.data.id > @historyID then 'push' else 'pop'), false
         @historyID = state.data.id
@@ -172,34 +177,47 @@ class SimpleSlideView
   off: () ->
     return unless @isActive
     @$container.trigger @options.eventNames.beforeOff
+    @queue = []
     @isActive = false
+    @isSliding = false
     @$container.removeClass @options.classNames.container
     @$views.removeClass @options.classNames.view + ' ' + @options.classNames.activeView
     @$views.css 'display', ''
     if @options.maintainViewportHeight
-      $('html').css 'min-height', ''
+      $html.css 'min-height', ''
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
+    if @options.useHistory
+      $window.off 'statechange'
     @$container.trigger @options.eventNames.off
 
   toggle: (activate = !@isActive) ->
     return @on() if activate
     return @off()
 
+  pushOrPop: (action, pushResult = true, popResult = false) ->
+    if action is 'push' then pushResult else popResult
+
   changeView: (targetView, action = 'push', useHistory = @options.useHistory) ->
-    eventArgs = [targetView, action]
+    args = arguments
+    return @queue.push args if @isSliding or @queue.length
+
     $targetView = $ targetView
     return if $targetView[0] is @$activeView[0]
-    @$container.trigger @options.eventNames.viewChangeStart, eventArgs
     $bothViews = @$activeView.add $targetView
-    containerWidth = outerWidth @$container
+
+    @isSliding = true
+    @$container.trigger @options.eventNames.viewChangeStart, args
+
     outAnimProps = {}
     inAnimProps = {}
     resetProps = ['left', 'position', 'top', 'width']
+
+    containerWidth = outerWidth @$container
     top = if @options.scrollOnStart and @options.scrollToContainerTop then @$container.position().top else 0
 
-    if @options.scrollOnStart and $(window).scrollTop() > top
+    if @options.scrollOnStart and $window.scrollTop() > top
       if typeof @options.scrollOnStart is 'string' and $[@options.scrollOnStart]?
         $[@options.scrollOnStart] top, @options.duration
       else
@@ -222,39 +240,37 @@ class SimpleSlideView
       translateAfter = if @options.use3D then ', 0, 0)' else ')'
       resetProps.push transformProp
       $bothViews.css 'left', 0
-      $targetView.css transformProp, translateBefore + (if action is 'push' then 100 else -100) + '%' + translateAfter
-      outAnimProps[transformProp] = translateBefore + (if action is 'push' then -100 else 100)  + '%' + translateAfter
+      $targetView.css transformProp, translateBefore + @pushOrPop(action, 100, -100) + '%' + translateAfter
+      outAnimProps[transformProp] = translateBefore + @pushOrPop(action, -100, 100)  + '%' + translateAfter
       inAnimProps[transformProp] = translateBefore + '0' + translateAfter
     else
       @$activeView.css 'left', 0
-      $targetView.css 'left', if action is 'push' then containerWidth else containerWidth * -1
-      outAnimProps['left'] = if action is 'push' then containerWidth * -1 else containerWidth
+      $targetView.css 'left', @pushOrPop(action, containerWidth, containerWidth * -1)
+      outAnimProps['left'] = @pushOrPop(action, containerWidth * -1, containerWidth)
       inAnimProps['left'] = 0
 
-    animateHeightCallback = () =>
+    changeComplete = () =>
       resetStyles @$container, ['height', 'overflow', 'position', 'width']
-      # if @options.useHistoryJS and pushState
-      #   @activeId += 1
-      #   History.pushState { id: @activeId, index: @$views.index($targetView) }, '', ''
-      @$container.trigger @options.eventNames.viewChangeEnd, eventArgs
+      @isSliding = false
+      @$container.trigger @options.eventNames.viewChangeEnd, args
+      @changeView.apply @, @queue.shift() if @queue.length
 
     animateHeight = () =>
       if @options.resizeHeight
         if @options.maintainViewportHeight and window.innerHeight > @lastViewportHeight
           @lastViewportHeight = window.innerHeight
-          $('html').css 'min-height', (@lastViewportHeight + top) + 'px'
+          $html.css 'min-height', (@lastViewportHeight + top) + 'px'
         @$container.animate
           height: outerHeight $targetView
           @options.heightDuration
           @options.easing
-          animateHeightCallback
+          changeComplete
       else
-        animateHeightCallback()
+        changeComplete()
 
     $targetView.show()
 
-    @$activeView.animate outAnimProps, @options.duration, @options.easing, () ->
-      resetStyles(@, resetProps).hide()
+    @$activeView.animate outAnimProps, @options.duration, @options.easing, () -> resetStyles(@, resetProps).hide()
 
     $targetView.animate inAnimProps, @options.duration, @options.easing, () =>
       resetStyles($targetView, resetProps)
@@ -265,6 +281,7 @@ class SimpleSlideView
     @$activeView.removeClass @options.classNames.activeView
     $targetView.addClass @options.classNames.activeView
     @$activeView = $targetView
+
     if useHistory
       @historyID += 1
       History.pushState { id: @historyID, viewIndex: @$views.index(@$activeView) }, null, ''
