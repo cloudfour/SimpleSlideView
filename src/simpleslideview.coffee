@@ -130,6 +130,9 @@ class SimpleSlideView
     @$views = if typeof @options.views is 'string' then @$container.find(@options.views) else $(@options.views)
     @$activeView =  if @options.activeView? then $(@options.activeView) else @$views.first()
     @isActive = false
+    @activeId = 0
+    if @options.useHistoryJS
+      History.pushState { id: @activeId, index: @$views.index(@$activeView) }, '', ''
     if @options.deferOn
       @$container.trigger @options.eventNames.deferred
     else
@@ -160,6 +163,18 @@ class SimpleSlideView
         if target.length
           event.preventDefault()
           @popView target
+    if @options.useHistoryJS
+      $(window).on 'statechange', () =>
+        console.log 'statechange'
+        state = History.getState()
+        if state.data.id isnt @activeId
+          console.log state.data.index
+          action = if state.data.id > @activeId then 'push' else 'pop'
+          @activeId = state.data.id
+          @changeView @$views.get(state.data.index), action, false
+      # $(window).on 'popstate', () ->
+      #   console.log 'popstate'
+      #   console.log History.getState()
     @$container.trigger @options.eventNames.on
 
   off: () ->
@@ -180,7 +195,7 @@ class SimpleSlideView
     return @on() if activate
     return @off()
 
-  changeView: (targetView, action = 'push') ->
+  changeView: (targetView, action = 'push', pushState = true) ->
     eventArgs = [targetView, action]
     @$container.trigger @options.eventNames.viewChangeStart, eventArgs
     $targetView = $ targetView
@@ -225,6 +240,9 @@ class SimpleSlideView
 
     animateHeightCallback = () =>
       resetStyles @$container, ['height', 'overflow', 'position', 'width']
+      if @options.useHistoryJS and pushState
+        @activeId += 1
+        History.pushState { id: @activeId, index: @$views.index($targetView) }, '', ''
       @$container.trigger @options.eventNames.viewChangeEnd, eventArgs
 
     animateHeight = () =>
