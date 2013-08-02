@@ -106,8 +106,9 @@ defaults =
     viewChangeStart: 'viewChangeStart'
     viewChangeEnd: 'viewChangeEnd'
 
-  # WIP!
-  useHistory: null
+  # If true, the plugin will attempt to use History.js
+  # to add back/forward button support.
+  useHistoryJS: null
 
 resetStyles = (el, styles) ->
   $el = $(el)
@@ -165,7 +166,7 @@ class SimpleSlideView
         if target.length
           event.preventDefault()
           @popView target
-    if @options.useHistory
+    if @options.useHistoryJS
       @historyID = 0
       History.replaceState { id: @historyID, viewIndex: @$views.index(@$activeView) }, null, ''
       $window.on 'statechange', () =>
@@ -188,7 +189,7 @@ class SimpleSlideView
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
-    if @options.useHistory
+    if @options.useHistoryJS
       $window.off 'statechange'
     @$container.trigger @options.eventNames.off
 
@@ -199,7 +200,7 @@ class SimpleSlideView
   pushOrPop: (action, pushResult = true, popResult = false) ->
     if action is 'push' then pushResult else popResult
 
-  changeView: (targetView, action = 'push', useHistory = @options.useHistory) ->
+  changeView: (targetView, action = 'push', useHistoryJS = @options.useHistoryJS) ->
     args = arguments
     return @queue.push args if @isSliding or @queue.length
 
@@ -282,7 +283,7 @@ class SimpleSlideView
     $targetView.addClass @options.classNames.activeView
     @$activeView = $targetView
 
-    if useHistory
+    if useHistoryJS
       @historyID += 1
       History.pushState { id: @historyID, viewIndex: @$views.index(@$activeView) }, null, ''
 
