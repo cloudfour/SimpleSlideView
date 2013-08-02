@@ -177,9 +177,9 @@ class SimpleSlideView
     return @on() if activate
     return @off()
 
-  changeView: (targetView, action = 'push') ->
+  changeView: (targetView, action = 'push', suppressEvents) ->
     eventArgs = [targetView, action]
-    @$container.trigger @options.eventNames.viewChangeStart, eventArgs
+    @$container.trigger @options.eventNames.viewChangeStart, eventArgs unless suppressEvents
     $targetView = $ targetView
     $bothViews = @$activeView.add $targetView
     containerWidth = outerWidth @$container
@@ -222,7 +222,7 @@ class SimpleSlideView
 
     animateHeightCallback = () =>
       resetStyles @$container, ['height', 'overflow', 'position', 'width']
-      @$container.trigger @options.eventNames.viewChangeEnd, eventArgs
+      @$container.trigger @options.eventNames.viewChangeEnd, eventArgs unless suppressEvents
 
     animateHeight = () =>
       if @options.resizeHeight

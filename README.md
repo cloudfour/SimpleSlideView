@@ -253,10 +253,12 @@ These are shortcut methods for...
 ### changeView
 
 ```javascript
-changeView(targetView, action)
+changeView(targetView, action, suppressEvents)
 ```
 
 This works the same as `pushView` or `popView`, accept it needs a value for `action` of either `'push'` or `'pop'`.
+
+When `true`, `suppressEvents` will stop the `viewChangeStart` and `viewChangeEnd` events from firing. Useful if you're rolling your own history handling or anything like that.
 
 ## Events
 
