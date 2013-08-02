@@ -74,9 +74,6 @@ defaults =
   # iOS Safari.
   maintainViewportHeight: null
 
-  # WIP!
-  useHistoryJS: false
-
   # The event that the magic data-attribute events will
   # be bound to. If 'false', no events will be bound.
   dataAttrEvent: 'click'
@@ -106,6 +103,9 @@ defaults =
     viewChangeStart: 'viewChangeStart'
     viewChangeEnd: 'viewChangeEnd'
 
+  # WIP!
+  useHistory: null
+
 resetStyles = (el, styles) ->
   $el = $(el)
   reset = {}
@@ -130,9 +130,6 @@ class SimpleSlideView
     @$views = if typeof @options.views is 'string' then @$container.find(@options.views) else $(@options.views)
     @$activeView =  if @options.activeView? then $(@options.activeView) else @$views.first()
     @isActive = false
-    @activeId = 0
-    if @options.useHistoryJS
-      History.pushState { id: @activeId, index: @$views.index(@$activeView) }, '', ''
     if @options.deferOn
       @$container.trigger @options.eventNames.deferred
     else
@@ -163,18 +160,13 @@ class SimpleSlideView
         if target.length
           event.preventDefault()
           @popView target
-    if @options.useHistoryJS
+    if @options.useHistory
+      @historyID = 0
+      History.replaceState { id: @historyID, viewIndex: @$views.index(@$activeView) }, null, ''
       $(window).on 'statechange', () =>
-        console.log 'statechange'
         state = History.getState()
-        if state.data.id isnt @activeId
-          console.log state.data.index
-          action = if state.data.id > @activeId then 'push' else 'pop'
-          @activeId = state.data.id
-          @changeView @$views.get(state.data.index), action, false
-      # $(window).on 'popstate', () ->
-      #   console.log 'popstate'
-      #   console.log History.getState()
+        @changeView @$views.get(state.data.viewIndex), (if state.data.id > @historyID then 'push' else 'pop'), false
+        @historyID = state.data.id
     @$container.trigger @options.eventNames.on
 
   off: () ->
@@ -195,10 +187,11 @@ class SimpleSlideView
     return @on() if activate
     return @off()
 
-  changeView: (targetView, action = 'push', pushState = true) ->
+  changeView: (targetView, action = 'push', useHistory = @options.useHistory) ->
     eventArgs = [targetView, action]
-    @$container.trigger @options.eventNames.viewChangeStart, eventArgs
     $targetView = $ targetView
+    return if $targetView[0] is @$activeView[0]
+    @$container.trigger @options.eventNames.viewChangeStart, eventArgs
     $bothViews = @$activeView.add $targetView
     containerWidth = outerWidth @$container
     outAnimProps = {}
@@ -240,9 +233,9 @@ class SimpleSlideView
 
     animateHeightCallback = () =>
       resetStyles @$container, ['height', 'overflow', 'position', 'width']
-      if @options.useHistoryJS and pushState
-        @activeId += 1
-        History.pushState { id: @activeId, index: @$views.index($targetView) }, '', ''
+      # if @options.useHistoryJS and pushState
+      #   @activeId += 1
+      #   History.pushState { id: @activeId, index: @$views.index($targetView) }, '', ''
       @$container.trigger @options.eventNames.viewChangeEnd, eventArgs
 
     animateHeight = () =>
@@ -272,6 +265,9 @@ class SimpleSlideView
     @$activeView.removeClass @options.classNames.activeView
     $targetView.addClass @options.classNames.activeView
     @$activeView = $targetView
+    if useHistory
+      @historyID += 1
+      History.pushState { id: @historyID, viewIndex: @$views.index(@$activeView) }, null, ''
 
   pushView: (targetView) -> @changeView targetView, 'push'
   popView: (targetView) -> @changeView targetView, 'pop'
