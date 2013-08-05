@@ -308,3 +308,16 @@ SimpleSlideView is written in [CoffeeScript](http://coffeescript.org/). We've in
 1. Watch the source file for changes: `grunt`
 
 As you save `simpleslideview.coffee`, the Grunt task will compile and minify automatically. You can stop this by hitting `Ctrl+C`.
+
+## License
+
+Released under the [MIT License](http://www.opensource.org/licenses/MIT).
+
+This repository contains other libraries that may or may not fall under the same license:
+
+* [FastClick](https://github.com/ftlabs/fastclick)
+* [jQuery](https://github.com/jquery/jquery)
+* [jQuery.ScrollTo](https://github.com/flesler/jquery.scrollTo)
+* [Modernizr](https://github.com/Modernizr/Modernizr)
+* [Zepto](https://github.com/madrobby/zepto)
+* [ZeptoScroll](https://github.com/suprMax/ZeptoScroll)
