@@ -106,24 +106,17 @@ defaults =
     viewChangeStart: 'viewChangeStart'
     viewChangeEnd: 'viewChangeEnd'
 
-  # If true, the plugin will attempt to use historyLib
-  # and historyChangeEvent to manage the history, which
-  # allows the browser's back and forward buttons to
-  # function. Defaults to false.
-  manipulateHistory: false
+  # If you would like the plugin to manipulate the
+  # browser history (which will allow the back/forward
+  # buttons to work), pass along the History.js object
+  # (https://github.com/browserstate/history.js/) or
+  # a different object with 'getState', 'pushState',
+  # and 'replaceState' methods.
+  historyLib: null
 
-  # If History.js is included, historyLib defaults to that.
-  # If you'd like to use a different History solution, you'll
-  # want to make this an object with methods that map to
-  # the History.js 'getState', 'pushState' and 'replaceState'
-  # methods.
-  # More info: https://github.com/browserstate/history.js/
-  historyLib: if History? then History else {}
-
-  # The name of the event the window will trigger when the
-  # state of the history changes. Defaults to 'statechange'
-  # when History.js is available.
-  historyChangeEvent: if History? then 'statechange' else null
+  # The event to listen to for history changes. Defaults
+  # to the History.js 'statechange' event.
+  historyChangeEvent: 'statechange'
 
 resetStyles = (el, styles) ->
   $el = $(el)
@@ -181,7 +174,7 @@ class SimpleSlideView
         if target.length
           event.preventDefault()
           @popView target
-    if @options.manipulateHistory
+    if @options.historyLib
       @historyID = 0
       @options.historyLib.replaceState { id: @historyID, viewIndex: @$views.index(@$activeView) }, null, ''
       $window.on @options.historyChangeEvent, () =>
@@ -204,7 +197,7 @@ class SimpleSlideView
     if @options.dataAttrEvent?
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.push + ']'
       @$container.off @options.dataAttrEvent, '[data-' + @options.dataAttr.pop + ']'
-    if @options.manipulateHistory
+    if @options.historyLib
       $window.off @options.historyChangeEvent
     @$container.trigger @options.eventNames.off
 
@@ -215,7 +208,7 @@ class SimpleSlideView
   pushOrPop: (action, pushResult = true, popResult = false) ->
     if action is 'push' then pushResult else popResult
 
-  changeView: (targetView, action = 'push', manipulateHistory = @options.manipulateHistory) ->
+  changeView: (targetView, action = 'push', manipulateHistory = @options.historyLib?) ->
     args = arguments
     return @queue.push args if @isSliding or @queue.length
 
