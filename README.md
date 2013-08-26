@@ -6,6 +6,8 @@ A nifty little jQuery or Zepto plugin for the simplest of sliding views.
 * [Basic demo](http://cloudfour.github.io/SimpleSlideView)
 * [Responsive demo](http://cloudfour.github.io/SimpleSlideView/responsive.html)
 
+If [Bower](http://bower.io/)'s your thing, you can install this plugin by running `bower install SimpleSlideView` in your project directory.
+
 ## Dependencies
 
 SimpleSlideView requires either [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) (the default build should be fine).
