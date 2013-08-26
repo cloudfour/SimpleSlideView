@@ -1,0 +1,11 @@
+{
+  "name": "SimpleSlideView",
+  "version": "1.0.0",
+  "main": [ "lib/simpleslideview.js" ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor"
+  ]
+}
