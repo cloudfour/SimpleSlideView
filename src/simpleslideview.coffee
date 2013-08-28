@@ -1,5 +1,20 @@
 $ = if jQuery? then jQuery else Zepto
 
+scrollCallback =
+  if $.scrollTo? and jQuery?
+    (top, duration, callback) ->
+      $.scrollTo {
+        top: top
+        duration: duration
+        onAfter: callback
+      }
+  else if $.scrollTo? and Zepto?
+    $.scrollTo
+  else
+    (top, duration, callback) ->
+      window.scrollTo 0, top
+      callback()
+
 defaults =
   # The default view selector. An object will be a
   # jQuery or Zepto object, a string will be used
@@ -54,13 +69,8 @@ defaults =
   # performance.) 'true' for Zepto, 'false' otherwise.
   deferHeightChange: Zepto?
 
-  # Scroll to the top of the window or container (see
-  # scrollToContainer) when a view change begins. If this is
-  # a string, the plugin will try to scroll to the position
-  # using a plugin with that name. If 'true', the scroll
-  # will snap to that position without animation.
-  # scrollOnStart: if $.scrollTo? then 'scrollTo' else false
-  scrollCallback: if $.scrollTo? then 'scrollTo' else false
+  # TODO
+  scrollCallback: scrollCallback
 
   # TODO
   scrollOn: 'end'
@@ -186,36 +196,49 @@ class SimpleSlideView
     return @on() if activate
     return @off()
 
-  scrollToTop: () ->
-    console.log 'scroll'
-
   pushOrPop: (action, pushResult = true, popResult = false) ->
     if action is 'push' then pushResult else popResult
 
-  changeView: (targetView, action = 'push') ->
+  # scrollToTop: (changeViewArgs) ->
+  #   top = if @options.scrollToContainerTop then @$container.position().top else 0
+  #   @options.scrollCallback top, @options.duration, ()->
+  #     console.log 'callback'
+
+  changeView: (targetView, action) ->
+    # do not continue if target view is nonexistent or the same
+    # as the currently active view
+    $targetView = $ targetView
+    return if !$targetView.length or $targetView[0] is @$activeView[0]
+
+    # do not continue if a slide is already occurring or there
+    # are existing items in the queue
     args = arguments
     return @queue.push args if @isSliding or @queue.length
 
-    $targetView = $ targetView
-    return if $targetView[0] is @$activeView[0]
-    $bothViews = @$activeView.add $targetView
-
+    # otherwise, trigger the start of the change events
     @isSliding = true
     @$container.trigger @options.eventNames.viewChangeStart, args
 
+    # determine relevant properties, styles, etc. prior to
+    # the view change beginning in earnest
+
+    $bothViews = @$activeView.add $targetView
     outAnimProps = {}
     inAnimProps = {}
     resetProps = ['left', 'position', 'top', 'width']
 
     containerWidth = outerWidth @$container
 
-    @$container.css
+    containerCSS =
       height: outerHeight @$container
       overflow: 'hidden'
       position: 'relative'
       width: '100%'
 
-    $bothViews.css
+    activeCSS = {}
+    targetCSS = {}
+
+    bothCSS =
       position: 'absolute'
       top: 0
       width: containerWidth
@@ -225,23 +248,37 @@ class SimpleSlideView
       translateBefore = if @options.use3D then 'translate3d(' else 'translateX('
       translateAfter = if @options.use3D then ', 0, 0)' else ')'
       resetProps.push transformProp
-      $bothViews.css 'left', 0
-      $targetView.css transformProp, translateBefore + @pushOrPop(action, 100, -100) + '%' + translateAfter
+      bothCSS['left'] = 0
+      targetCSS[transformProp] = translateBefore + @pushOrPop(action, 100, -100) + '%' + translateAfter
       outAnimProps[transformProp] = translateBefore + @pushOrPop(action, -100, 100)  + '%' + translateAfter
       inAnimProps[transformProp] = translateBefore + '0' + translateAfter
     else
-      @$activeView.css 'left', 0
-      $targetView.css 'left', @pushOrPop(action, containerWidth, containerWidth * -1)
+      activeCSS['left'] = 0
+      targetCSS['left'] = @pushOrPop(action, containerWidth, containerWidth * -1)
       outAnimProps['left'] = @pushOrPop(action, containerWidth * -1, containerWidth)
       inAnimProps['left'] = 0
 
-    changeComplete = () =>
-      resetStyles @$container, ['height', 'overflow', 'position', 'width']
+    # build anonymous functions for carrying out these specific actions
+
+    # after the scroll (if the scroll happens at the end)
+    onScrollEnd = () =>
       @isSliding = false
       @$container.trigger @options.eventNames.viewChangeEnd, args
       @changeView.apply @, @queue.shift() if @queue.length
 
-    animateHeight = () =>
+    # after the change
+    onChangeEnd = () =>
+      resetStyles @$container, ['height', 'overflow', 'position', 'width']
+      @$activeView.removeClass @options.classNames.activeView
+      $targetView.addClass @options.classNames.activeView
+      @$activeView = $targetView
+      if @options.scrollCallback and @options.scrollOn is 'end'
+        @scrollAction(onScrollEnd)
+      else
+        onScrollEnd()
+
+    # just before the change
+    beforeChangeEnd = () =>
       if @options.resizeHeight
         if @options.maintainViewportHeight and window.innerHeight > @lastViewportHeight
           @lastViewportHeight = window.innerHeight
@@ -250,100 +287,37 @@ class SimpleSlideView
           height: outerHeight $targetView
           @options.heightDuration
           @options.easing
-          changeComplete
+          onChangeEnd
       else
-        changeComplete()
+        onChangeEnd()
 
-    $targetView.show()
+    # the main action
+    changeAction = () =>
+      @$container.css containerCSS
+      $bothViews.css bothCSS
+      @$activeView.css activeCSS
+      $targetView.css targetCSS
+      $targetView.show()
+      @$activeView.animate outAnimProps, @options.duration, @options.easing, () -> resetStyles(@, resetProps).hide()
+      $targetView.animate inAnimProps, @options.duration, @options.easing, () =>
+        resetStyles $targetView, resetProps
+        beforeChangeEnd() if @options.deferHeightChange
+      animateHeight() unless @options.deferHeightChange
 
-    @$activeView.animate outAnimProps, @options.duration, @options.easing, () -> resetStyles(@, resetProps).hide()
+    # if scrolling should happen at the start, fire the change
+    # action after the scroll action
+    if @options.scrollCallback and @options.scrollOn is 'start'
+      @scrollAction(changeAction)
+    else
+      # otherwise, fire it up!
+      changeAction()
 
-    $targetView.animate inAnimProps, @options.duration, @options.easing, () =>
-      resetStyles($targetView, resetProps)
-      animateHeight() if @options.deferHeightChange
-
-    animateHeight() unless @options.deferHeightChange
-
-    @$activeView.removeClass @options.classNames.activeView
-    $targetView.addClass @options.classNames.activeView
-    @$activeView = $targetView
-
-    # top =
-
-  # changeView: (targetView, action = 'push') ->
-  #   eventArgs = [targetView, action]
-  #   @$container.trigger @options.eventNames.viewChangeStart, eventArgs
-  #   $targetView = $ targetView
-  #   $bothViews = @$activeView.add $targetView
-  #   containerWidth = outerWidth @$container
-  #   outAnimProps = {}
-  #   inAnimProps = {}
-  #   resetProps = ['left', 'position', 'top', 'width']
-  #   top = if @options.scrollOnStart and @options.scrollToContainerTop then @$container.position().top else 0
-
-  #   if @options.scrollOnStart and $(window).scrollTop() > top
-  #     if typeof @options.scrollOnStart is 'string' and $[@options.scrollOnStart]?
-  #       $[@options.scrollOnStart] top, @options.duration
-  #     else
-  #       window.scrollTo 0, top
-
-  #   @$container.css
-  #     height: outerHeight @$container
-  #     overflow: 'hidden'
-  #     position: 'relative'
-  #     width: '100%'
-
-  #   $bothViews.css
-  #     position: 'absolute'
-  #     top: 0
-  #     width: containerWidth
-
-  #   if @options.useTransformProps
-  #     transformProp = @options.cssPrefix + 'transform'
-  #     translateBefore = if @options.use3D then 'translate3d(' else 'translateX('
-  #     translateAfter = if @options.use3D then ', 0, 0)' else ')'
-  #     resetProps.push transformProp
-  #     $bothViews.css 'left', 0
-  #     $targetView.css transformProp, translateBefore + (if action is 'push' then 100 else -100) + '%' + translateAfter
-  #     outAnimProps[transformProp] = translateBefore + (if action is 'push' then -100 else 100)  + '%' + translateAfter
-  #     inAnimProps[transformProp] = translateBefore + '0' + translateAfter
-  #   else
-  #     @$activeView.css 'left', 0
-  #     $targetView.css 'left', if action is 'push' then containerWidth else containerWidth * -1
-  #     outAnimProps['left'] = if action is 'push' then containerWidth * -1 else containerWidth
-  #     inAnimProps['left'] = 0
-
-  #   animateHeightCallback = () =>
-  #     resetStyles @$container, ['height', 'overflow', 'position', 'width']
-  #     @$container.trigger @options.eventNames.viewChangeEnd, eventArgs
-
-  #   animateHeight = () =>
-  #     if @options.resizeHeight
-  #       if @options.maintainViewportHeight and window.innerHeight > @lastViewportHeight
-  #         @lastViewportHeight = window.innerHeight
-  #         $('html').css 'min-height', (@lastViewportHeight + top) + 'px'
-  #       @$container.animate
-  #         height: outerHeight $targetView
-  #         @options.heightDuration
-  #         @options.easing
-  #         animateHeightCallback
-  #     else
-  #       animateHeightCallback()
-
-  #   $targetView.show()
-
-  #   @$activeView.animate outAnimProps, @options.duration, @options.easing, () ->
-  #     resetStyles(@, resetProps).hide()
-
-  #   $targetView.animate inAnimProps, @options.duration, @options.easing, () =>
-  #     resetStyles($targetView, resetProps)
-  #     animateHeight() if @options.deferHeightChange
-
-  #   animateHeight() unless @options.deferHeightChange
-
-  #   @$activeView.removeClass @options.classNames.activeView
-  #   $targetView.addClass @options.classNames.activeView
-  #   @$activeView = $targetView
+  scrollAction: (callback) ->
+    top = if @options.scrollToContainerTop then @$container.position().top else 0
+    if $(window).scrollTop() > top
+      @options.scrollCallback top, @options.duration, callback
+    else
+      callback()
 
   pushView: (targetView) -> @changeView targetView, 'push'
   popView: (targetView) -> @changeView targetView, 'pop'
