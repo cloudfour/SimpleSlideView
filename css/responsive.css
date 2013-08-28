@@ -29,17 +29,35 @@
     background-image: none;
   }
 
-  .views-nav a.is-active {
+  .demo-active .views-nav a.is-active {
     background-image: url(../img/arrow-right.svg);
     color: #999;
   }
 
   .views-main .view {
-    display: none;
+    border-radius: 0;
+    border-top-width: 0;
     margin-left: 27%;
   }
 
-  .views-main .view.is-active {
+  .demo-active .views-main .view {
+    display: none;
+  }
+
+  .views-main .view:first-child,
+  .demo-active .views-main .view {
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    border-top-width: 2px;
+  }
+
+  .views-main .view:last-child,
+  .demo-active .views-main .view {
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+  }
+
+  .demo-active .views-main .view.is-active {
     display: block;
   }
 

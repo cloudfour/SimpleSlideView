@@ -142,6 +142,7 @@ $viewContainer
     // are turned off. I would not recommend using this outside
     // the context of this demo... consider it a placeholder for
     // "your large layout logic here".
+    $viewContainer.addClass('demo-active');
     $('a[data-pushview]').on('click', function (event) {
       var href = $(this).attr('href')
         , $target = $(href)
@@ -158,6 +159,7 @@ $viewContainer
   })
   // This is called when the plugin is _about_ to activate.
   .on('slideViewBeforeOn', function () {
+    $viewContainer.removeClass('demo-active');
     // Remove the event we bound to these elements in the
     // previous function so that SimpleSlideView can use
     // them without conflicts.
