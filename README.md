@@ -8,6 +8,18 @@ A nifty little jQuery or Zepto plugin for the simplest of sliding views.
 
 If [Bower](http://bower.io/)'s your thing, you can install this plugin by running `bower install SimpleSlideView` in your project directory.
 
+## History
+
+### 1.1.0
+* View changes now queue to avoid potential conflicts if `changeView` is called before the existing view change has completed.
+* jQuery scrolling performance greatly improved.
+* The `scrollOnStart` option has been removed. The `scrollOn`, `scrollCallback` and `concurrentScroll` options have been added in its place.
+* The `deferHeightChange` option has been replaced with `concurrentHeightChange`. If you were previously setting `deferHeightChange` to `true`, instead set `concurrentHeightChange` to `false`.
+* Updated responsive demo (see issue #6).
+
+### 1.0.0
+Happy birthday to _meeee_... &#9835;
+
 ## Dependencies
 
 SimpleSlideView requires either [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) (the default build should be fine).
@@ -16,7 +28,7 @@ SimpleSlideView requires either [jQuery](http://jquery.com/) or [Zepto](http://z
 
 This plugin was designed to work well with non-fixed layouts, which means it can be helpful to scroll to the top of the window or container prior to a view changing. If a `$.scrollTo` plugin is available, SimpleSlideView will attempt to use it by default. It has been tested with [jquery.scrollTo](https://github.com/flesler/jquery.scrollTo) and [ZeptoScroll](https://github.com/suprMax/ZeptoScroll/).
 
-This functionality can be mimicked using SimpleSlideView's events if plugins aren't your bag. You can also just set the `scrollOnStart` option to `true` if you don't care about animation... no plugin required. See options for more info.
+If you'd like to change this behavior, you can specify your own callback using the `scrollCallback` option.
 
 ## Getting started
 
@@ -164,23 +176,41 @@ resizeHeight: true
 # will be used.
 heightDuration: null
 
-# If 'true', the resizeHeight animation will occur after
-# the rest of the view change has finished. (Having too
-# many CSS animations happening at once sometimes affects
-# performance.) 'true' for Zepto, 'false' otherwise.
-deferHeightChange: Zepto?
+# If 'true', the height change will not wait for the
+# slide to complete before resizing. This can feel
+# snappier but may affect performance.
+concurrentHeightChange: ! Zepto?
 
-# Scroll to the top of the window or container (see
-# scrollToContainer) when a view change begins. If this is
-# a string, the plugin will try to scroll to the position
-# using a plugin with that name. If 'true', the scroll
-# will snap to that position without animation.
-scrollOnStart: if $.scrollTo? then 'scrollTo' else false
+# If 'start', the scrollCallback will happen before
+# the rest of the slide. If 'end', it will happen
+# after. If false, scrolling will be disabled.
+scrollOn: 'start'
+
+# The callback to use for scrolling when the view
+# change completes. Supports jQuery scrollTo,
+# ZeptoScroll and no scroll plugin, but you can
+# define your own. The callback should expect to
+# receive three arguments: a Y-coordinate for the
+# intended scroll position, a duration for the
+# animation (if supported), and an optional callback
+# when the action completes.
+scrollCallback: scrollCallback
+
+# Duration of the scroll animation if the callback
+# supports it. If 'null', the value of the duration
+# option will be used.
+scrollDuration: null
 
 # If 'true', the scroll will move to the top of the
 # container. If 'false', the top of the window will
 # be used.
 scrollToContainerTop: true
+
+# If scrollOn is 'start' and this is 'true', the
+# slide will not wait for the scroll to complete
+# before triggering other events. This can feel
+# snappier but may affect performance.
+concurrentScroll: ! Zepto?
 
 # If 'true', the height of the viewport will never
 # lower. If 'null', the value will be based on whether
@@ -300,6 +330,25 @@ Some interfaces will animate _multiple_ views in a row if you pop a view far int
 ### Animation performance
 
 We've noticed that some pages perform better with CSS animations and some with JavaScript. Speaking broadly, pages with a _lot_ of complex or animating content tend to perform better with JS, while most other pages seem to perform better with CSS. We hope that by relying on the `$.animate` method and providing options for `useTransformProps` and `use3D` we've given you the ability to experiment with what works best for your project.
+
+### Nested instances
+
+You will probably run into conflicts if you try nesting one sliding view in another. You can remedy some conflicts by specifying different names for conflicting attributes. For example:
+
+```javascript
+var parentSlideView = $('#parent').slideView({
+  dataAttr: {
+    push: 'parent-pushview',
+    pop: 'parent-popview'
+  }
+});
+var childSlideView = $('#child').slideView({
+  dataAttr: {
+    push: 'child-pushview',
+    pop: 'child-popview'
+  }
+});
+```
 
 ## Building from source
 
