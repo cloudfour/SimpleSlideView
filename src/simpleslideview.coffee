@@ -146,6 +146,9 @@ outerWidth = (el) ->
   return $(el).outerWidth() if $.fn.outerWidth?
   return $(el).width()
 
+pushOrPop = (action, pushResult = true, popResult = false) ->
+  if action is 'push' then pushResult else popResult
+
 class SimpleSlideView
   constructor: (element, options) ->
     @options = $.extend true, {}, defaults, options
@@ -166,7 +169,6 @@ class SimpleSlideView
     return if @isActive
     @$container.trigger @options.eventNames.beforeOn
     @queue = []
-    @isActive = true
     @isActive = true
     @isSliding = false
     @$container.addClass @options.classNames.container
@@ -211,9 +213,6 @@ class SimpleSlideView
   toggle: (activate = !@isActive) ->
     return @on() if activate
     return @off()
-
-  _pushOrPop: (action, pushResult = true, popResult = false) ->
-    if action is 'push' then pushResult else popResult
 
   changeView: (targetView, action) ->
     # do not continue if target view is nonexistent or the same
@@ -260,13 +259,13 @@ class SimpleSlideView
       translateAfter = if @options.use3D then ', 0, 0)' else ')'
       resetProps.push transformProp
       bothCSS['left'] = 0
-      targetCSS[transformProp] = translateBefore + @_pushOrPop(action, 100, -100) + '%' + translateAfter
-      outAnimProps[transformProp] = translateBefore + @_pushOrPop(action, -100, 100)  + '%' + translateAfter
+      targetCSS[transformProp] = translateBefore + pushOrPop(action, 100, -100) + '%' + translateAfter
+      outAnimProps[transformProp] = translateBefore + pushOrPop(action, -100, 100)  + '%' + translateAfter
       inAnimProps[transformProp] = translateBefore + '0' + translateAfter
     else
       activeCSS['left'] = 0
-      targetCSS['left'] = @_pushOrPop(action, containerWidth, containerWidth * -1)
-      outAnimProps['left'] = @_pushOrPop(action, containerWidth * -1, containerWidth)
+      targetCSS['left'] = pushOrPop(action, containerWidth, containerWidth * -1)
+      outAnimProps['left'] = pushOrPop(action, containerWidth * -1, containerWidth)
       inAnimProps['left'] = 0
 
     # build anonymous functions for carrying out these specific actions

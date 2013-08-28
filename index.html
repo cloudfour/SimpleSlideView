@@ -95,7 +95,7 @@
 // largely jQuery-compatible API." What this chunk of code does is
 // determine which library to use (jQuery or Zepto), and then which
 // scroll plugin to use. For more info, see http://zeptojs.com/#download
-var useZepto = false //('__proto__' in {})
+var useZepto = ('__proto__' in {})
   , lib = useZepto ? 'zepto' : 'jquery'
   , scrollPlugin = useZepto ? 'scroll' : 'scrollTo';
 document.write(
