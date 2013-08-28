@@ -3,12 +3,8 @@ $ = if jQuery? then jQuery else Zepto
 scrollCallback =
   if $.scrollTo? and jQuery?
     (top, duration, callback) ->
-      $.scrollTo {
-        top: top
-        duration: duration
-        onAfter: callback
-      }
-  else if $.scrollTo? and Zepto?
+      $.scrollTo top, duration, { 'axis':'y', 'onAfter': callback }
+  else if $.scrollTo?
     $.scrollTo
   else
     (top, duration, callback) ->
@@ -63,22 +59,41 @@ defaults =
   # will be used.
   heightDuration: null
 
-  # If 'true', the resizeHeight animation will occur after
-  # the rest of the view change has finished. (Having too
-  # many CSS animations happening at once sometimes affects
-  # performance.) 'true' for Zepto, 'false' otherwise.
-  deferHeightChange: Zepto?
+  # If 'true', the height change will not wait for the
+  # slide to complete before resizing. This can feel
+  # snappier but may affect performance.
+  concurrentHeightChange: ! Zepto?
 
-  # TODO
+  # If 'start', the scrollCallback will happen before
+  # the rest of the slide. If 'end', it will happen
+  # after. If false, scrolling will be disabled.
+  scrollOn: 'start'
+
+  # The callback to use for scrolling when the view
+  # change completes. Supports jQuery scrollTo,
+  # ZeptoScroll and no scroll plugin, but you can
+  # define your own. The callback should expect to
+  # receive three arguments: a Y-coordinate for the
+  # intended scroll position, a duration for the
+  # animation (if supported), and an optional callback
+  # when the action completes.
   scrollCallback: scrollCallback
 
-  # TODO
-  scrollOn: 'end'
+  # Duration of the scroll animation if the callback
+  # supports it. If 'null', the value of the duration
+  # option will be used.
+  scrollDuration: null
 
   # If 'true', the scroll will move to the top of the
   # container. If 'false', the top of the window will
   # be used.
   scrollToContainerTop: true
+
+  # If scrollOn is 'start' and this is 'true', the
+  # slide will not wait for the scroll to complete
+  # before triggering other events. This can feel
+  # snappier but may affect performance.
+  concurrentScroll: ! Zepto?
 
   # If 'true', the height of the viewport will never
   # lower. If 'null', the value will be based on whether
@@ -135,6 +150,7 @@ class SimpleSlideView
   constructor: (element, options) ->
     @options = $.extend true, {}, defaults, options
     @options.heightDuration = @options.duration unless @options.heightDuration?
+    @options.scrollDuration = @options.duration unless @options.scrollDuration?
     @options.maintainViewportHeight = @options.resizeHeight and @options.scrollOnStart unless @options.maintainViewportHeight?
     @options.maintainViewportHeight = false unless window.innerHeight?
     @$container = $ element
@@ -196,13 +212,8 @@ class SimpleSlideView
     return @on() if activate
     return @off()
 
-  pushOrPop: (action, pushResult = true, popResult = false) ->
+  _pushOrPop: (action, pushResult = true, popResult = false) ->
     if action is 'push' then pushResult else popResult
-
-  # scrollToTop: (changeViewArgs) ->
-  #   top = if @options.scrollToContainerTop then @$container.position().top else 0
-  #   @options.scrollCallback top, @options.duration, ()->
-  #     console.log 'callback'
 
   changeView: (targetView, action) ->
     # do not continue if target view is nonexistent or the same
@@ -249,13 +260,13 @@ class SimpleSlideView
       translateAfter = if @options.use3D then ', 0, 0)' else ')'
       resetProps.push transformProp
       bothCSS['left'] = 0
-      targetCSS[transformProp] = translateBefore + @pushOrPop(action, 100, -100) + '%' + translateAfter
-      outAnimProps[transformProp] = translateBefore + @pushOrPop(action, -100, 100)  + '%' + translateAfter
+      targetCSS[transformProp] = translateBefore + @_pushOrPop(action, 100, -100) + '%' + translateAfter
+      outAnimProps[transformProp] = translateBefore + @_pushOrPop(action, -100, 100)  + '%' + translateAfter
       inAnimProps[transformProp] = translateBefore + '0' + translateAfter
     else
       activeCSS['left'] = 0
-      targetCSS['left'] = @pushOrPop(action, containerWidth, containerWidth * -1)
-      outAnimProps['left'] = @pushOrPop(action, containerWidth * -1, containerWidth)
+      targetCSS['left'] = @_pushOrPop(action, containerWidth, containerWidth * -1)
+      outAnimProps['left'] = @_pushOrPop(action, containerWidth * -1, containerWidth)
       inAnimProps['left'] = 0
 
     # build anonymous functions for carrying out these specific actions
@@ -273,7 +284,7 @@ class SimpleSlideView
       $targetView.addClass @options.classNames.activeView
       @$activeView = $targetView
       if @options.scrollCallback and @options.scrollOn is 'end'
-        @scrollAction(onScrollEnd)
+        @_scrollToTop(onScrollEnd)
       else
         onScrollEnd()
 
@@ -301,22 +312,25 @@ class SimpleSlideView
       @$activeView.animate outAnimProps, @options.duration, @options.easing, () -> resetStyles(@, resetProps).hide()
       $targetView.animate inAnimProps, @options.duration, @options.easing, () =>
         resetStyles $targetView, resetProps
-        beforeChangeEnd() if @options.deferHeightChange
-      animateHeight() unless @options.deferHeightChange
+        beforeChangeEnd() unless @options.concurrentHeightChange
+      beforeChangeEnd() if @options.concurrentHeightChange
 
     # if scrolling should happen at the start, fire the change
     # action after the scroll action
     if @options.scrollCallback and @options.scrollOn is 'start'
-      @scrollAction(changeAction)
-    else
-      # otherwise, fire it up!
-      changeAction()
+      if @options.concurrentScroll
+        @_scrollToTop()
+      else
+        return @_scrollToTop(changeAction)
 
-  scrollAction: (callback) ->
+    # otherwise, fire it up!
+    changeAction()
+
+  _scrollToTop: (callback) ->
     top = if @options.scrollToContainerTop then @$container.position().top else 0
     if $(window).scrollTop() > top
-      @options.scrollCallback top, @options.duration, callback
-    else
+      @options.scrollCallback top, @options.scrollDuration, callback
+    else if callback?
       callback()
 
   pushView: (targetView) -> @changeView targetView, 'push'
