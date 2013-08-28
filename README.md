@@ -15,7 +15,7 @@ If [Bower](http://bower.io/)'s your thing, you can install this plugin by runnin
 * jQuery scrolling performance greatly improved.
 * The `scrollOnStart` option has been removed. The `scrollOn`, `scrollCallback` and `concurrentScroll` options have been added in its place.
 * The `deferHeightChange` option has been replaced with `concurrentHeightChange`. If you were previously setting `deferHeightChange` to `true`, instead set `concurrentHeightChange` to `false`.
-* Updated responsive demo (see issue #6).
+* Miscellaneous fixes and tweaks.
 
 ### 1.0.0
 Happy birthday to _meeee_... &#9835;
@@ -327,9 +327,15 @@ There are entire libraries devoted to maintaining history with JavaScript. Frank
 
 Some interfaces will animate _multiple_ views in a row if you pop a view far into its history. This isn't part of SimpleSlideView right now because we don't maintain history and we don't require views exist in any particular hierarchy we could infer history from.
 
+### Dynamic content
+
+This plugin was designed with static webpages in mind. It currently maintains jQuery/Zepto objects for the views available to it when instantiated. Because of this, it is not particularly well-suited for interfaces that load a large amount of content dynamically. There is [an existing issue for this](https://github.com/cloudfour/SimpleSlideView/issues/7); additional feedback, ideas and pull requests are welcome.
+
 ### Animation performance
 
 We've noticed that some pages perform better with CSS animations and some with JavaScript. Speaking broadly, pages with a _lot_ of complex or animating content tend to perform better with JS, while most other pages seem to perform better with CSS. We hope that by relying on the `$.animate` method and providing options for `useTransformProps` and `use3D` we've given you the ability to experiment with what works best for your project.
+
+As of 1.1.x, you can now disable some concurrent animations by setting `concurrentScroll` and/or `concurrentHeightChange` to `false`. This may improve performance for some projects.
 
 ### Nested instances
 
