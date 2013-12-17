@@ -9,7 +9,8 @@ scrollCallback =
   else
     (top, duration, callback) ->
       window.scrollTo 0, top
-      callback()
+      if callback
+        callback()
 
 defaults =
   # The default view selector. An object will be a
