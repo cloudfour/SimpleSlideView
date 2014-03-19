@@ -10,6 +10,11 @@ If [Bower](http://bower.io/)'s your thing, you can install this plugin by runnin
 
 ## History
 
+### 1.1.1
+* Updated Zepto to 1.1.3 with `fx` module included.
+* Improved conditional checks on some `$.fx`-dependent default values.
+* Updated README with information about new Zepto dependency requirements.
+
 ### 1.1.0
 * View changes now queue to avoid potential conflicts if `changeView` is called before the existing view change has completed.
 * jQuery scrolling performance greatly improved.
@@ -23,6 +28,8 @@ Happy birthday to _meeee_... &#9835;
 ## Dependencies
 
 SimpleSlideView requires either [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) (the default build should be fine).
+
+If using Zepto 1.1.3 or later, you must include the `fx` module in your build. Refer to [Zepto's README](https://github.com/madrobby/zepto#readme) for more info.
 
 ### Optional: Scrolling
 
