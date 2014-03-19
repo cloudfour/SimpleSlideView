@@ -29,7 +29,7 @@ defaults =
 
   # The speed of animations. Defaults to the current
   # jQuery or Zepto default.
-  duration: $.fx.speeds._default
+  duration: if $.fx? and $.fx.cssPrefix? then $.fx.speeds._default else 400
 
   # The easing method to use for animations. Defaults
   # to 'ease-out' for Zepto and 'swing' for jQuery.
@@ -47,7 +47,7 @@ defaults =
 
   # The CSS prefix to use for the 'transform' property.
   # Defaults to the one the framework is using (if any).
-  cssPrefix: if $.fx.cssPrefix? then $.fx.cssPrefix else ''
+  cssPrefix: if $.fx? and $.fx.cssPrefix? then $.fx.cssPrefix else ''
 
   # If 'true', the height of the container will be resized
   # to match the height of the active view (both initially
