@@ -1,35 +1,26 @@
+// Leaving the unused watch task here in case
+// we need it again a near-future version.
 module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    coffee: {
-      options: {
-        bare: true
-      },
-      compile: {
-        files: {
-          'lib/simpleslideview.js': 'src/simpleslideview.coffee'
-        }
-      }
-    },
     uglify: {
       build: {
-        src: 'lib/simpleslideview.js',
+        src: 'src/simpleslideview.js',
         dest: 'lib/simpleslideview.min.js'
       }
     },
     watch: {
       scripts: {
-        files: ['src/simpleslideview.coffee'],
-        tasks: ['coffee', 'uglify']
+        files: ['src/simpleslideview.js'],
+        tasks: ['uglify']
       }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['coffee', 'uglify', 'watch']);
+  grunt.registerTask('default', ['uglify']);
 
 };
