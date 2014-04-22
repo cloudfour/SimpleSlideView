@@ -13,7 +13,7 @@
 
 <div class="island">
   <h1>SimpleSlideView</h1>
-  <p>A nifty little <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a> plugin for the simplest of sliding views.</p>
+  <p>A nifty little <a href="http://jquery.com/">jQuery</a> plugin for the simplest of sliding views.</p>
 </div>
 
 <div class="views">
@@ -52,7 +52,7 @@
         <h2>How it works</h2>
         <p>The plugin only needs a few ingredients to work:</p>
         <ul>
-          <li>Either <a href="http://jquery.com/">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a>.</li>
+          <li><a href="http://jquery.com/">jQuery</a>.</li>
           <li>A containing element.</li>
           <li>Some special <code>data-pushview</code> and <code>data-popview</code> attributes on elements you want to trigger slides.</li>
         </ul>
@@ -90,19 +90,8 @@
 <!-- this library removes the 300ms delay on browsers with touch UIs -->
 <script src="vendor/fastclick.js"></script>
 
-<script>
-// "Zepto is a minimalist JavaScript library for modern browsers with a
-// largely jQuery-compatible API." What this chunk of code does is
-// determine which library to use (jQuery or Zepto), and then which
-// scroll plugin to use. For more info, see http://zeptojs.com/#download
-var useZepto = ('__proto__' in {})
-  , lib = useZepto ? 'zepto' : 'jquery'
-  , scrollPlugin = useZepto ? 'scroll' : 'scrollTo';
-document.write(
-  '<script src=vendor/' + lib + '.min.js><\/script>' +
-  '<script src=vendor/' + lib + '.' + scrollPlugin + '.min.js><\/script>'
-);
-</script>
+<script src="vendor/jquery.min.js"></script>
+<script src="vendor/jquery.scrollTo.min.js"></script>
 
 <!-- including the (minified) plugin, because duh -->
 <script src="lib/simpleslideview.min.js"></script>

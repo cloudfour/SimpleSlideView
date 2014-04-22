@@ -3,6 +3,9 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     coffee: {
+      options: {
+        bare: true
+      },
       compile: {
         files: {
           'lib/simpleslideview.js': 'src/simpleslideview.coffee'
