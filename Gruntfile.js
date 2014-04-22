@@ -6,7 +6,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
       build: {
-        src: 'src/simpleslideview.js',
+        src: 'lib/simpleslideview.js',
         dest: 'lib/simpleslideview.min.js'
       }
     },
