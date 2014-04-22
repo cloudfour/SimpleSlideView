@@ -1,6 +1,6 @@
 # SimpleSlideView
 
-A nifty little jQuery or Zepto plugin for the simplest of sliding views.
+A nifty little jQuery plugin for the simplest of sliding views.
 
 * [Explanatory blog post](http://blog.cloudfour.com/simpleslideview/)
 * [Basic demo](http://cloudfour.github.io/SimpleSlideView)
@@ -27,13 +27,11 @@ Happy birthday to _meeee_... &#9835;
 
 ## Dependencies
 
-SimpleSlideView requires either [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/) (the default build should be fine).
-
-If using Zepto 1.1.3 or later, you must include the `fx` module in your build. Refer to [Zepto's README](https://github.com/madrobby/zepto#readme) for more info.
+SimpleSlideView requires [jQuery](http://jquery.com/).
 
 ### Optional: Scrolling
 
-This plugin was designed to work well with non-fixed layouts, which means it can be helpful to scroll to the top of the window or container prior to a view changing. If a `$.scrollTo` plugin is available, SimpleSlideView will attempt to use it by default. It has been tested with [jquery.scrollTo](https://github.com/flesler/jquery.scrollTo) and [ZeptoScroll](https://github.com/suprMax/ZeptoScroll/).
+This plugin was designed to work well with non-fixed layouts, which means it can be helpful to scroll to the top of the window or container prior to a view changing. If a `$.scrollTo` plugin is available, SimpleSlideView will attempt to use it by default. It has been tested with [jquery.scrollTo](https://github.com/flesler/jquery.scrollTo).
 
 If you'd like to change this behavior, you can specify your own callback using the `scrollCallback` option.
 
@@ -137,7 +135,7 @@ Here are all the options and their defaults:
 
 ```coffeescript
 # The default view selector. An object will be a
-# jQuery or Zepto object, a string will be used
+# jQuery object, a string will be used
 # as a selector within the container.
 views: '.view'
 
@@ -150,18 +148,17 @@ activeView: null
 # until the on() method is called.
 deferOn: false
 
-# The speed of animations. Defaults to the current
-# jQuery or Zepto default.
+# The speed of animations.
 duration: $.fx.speeds._default
 
 # The easing method to use for animations. Defaults
-# to 'ease-out' for Zepto and 'swing' for jQuery.
-easing: if Zepto? then 'ease-out' else 'swing'
+# to 'swing'.
+easing: 'swing'
 
 # If true, animations will act on the 'transform'
 # properties rather than 'right' or 'left'. Defaults
-# to 'true' for Zepto.
-useTransformProps: Zepto?
+# to false.
+useTransformProps: false
 
 # When 'true', 3D transforms will be used. Can sometimes
 # improve performance. 'true' by default if Modernizr and
@@ -186,7 +183,7 @@ heightDuration: null
 # If 'true', the height change will not wait for the
 # slide to complete before resizing. This can feel
 # snappier but may affect performance.
-concurrentHeightChange: ! Zepto?
+concurrentHeightChange: true
 
 # If 'start', the scrollCallback will happen before
 # the rest of the slide. If 'end', it will happen
@@ -194,8 +191,8 @@ concurrentHeightChange: ! Zepto?
 scrollOn: 'start'
 
 # The callback to use for scrolling when the view
-# change completes. Supports jQuery scrollTo,
-# ZeptoScroll and no scroll plugin, but you can
+# change completes. Supports jQuery scrollTo
+# or no scroll plugin, but you can
 # define your own. The callback should expect to
 # receive three arguments: a Y-coordinate for the
 # intended scroll position, a duration for the
@@ -217,7 +214,7 @@ scrollToContainerTop: true
 # slide will not wait for the scroll to complete
 # before triggering other events. This can feel
 # snappier but may affect performance.
-concurrentScroll: ! Zepto?
+concurrentScroll: true
 
 # If 'true', the height of the viewport will never
 # lower. If 'null', the value will be based on whether
@@ -276,7 +273,7 @@ toggle(activate)
 
 These methods activate or deactivate the plugin. You don't have to fire `on()` unless you've set `deferOn` to `true` or you've called `off()` or `toggle()`.
 
-Without arguments, `toggle()` will call `on()` if the plugin is off and `off()` if the plugin is on. You can also pass a boolean value (`true` for `on`).
+Without arguments, `toggle()` will call `on()` if the plugin is off and `off()` if the plugin is on. You can also pass a Boolean value (`true` for `on`).
 
 ### pushView and popView
 
@@ -285,7 +282,7 @@ pushView(targetView)
 popView(targetView)
 ```
 
-Will push or pop to `targetView`. This will get passed to `$`, so it can be whatever kind of selector jQuery or Zepto would accept.
+Will push or pop to `targetView`. This will get passed to `$`, so it can be whatever kind of selector jQuery would accept.
 
 These are shortcut methods for...
 
@@ -336,7 +333,7 @@ Some interfaces will animate _multiple_ views in a row if you pop a view far int
 
 ### Dynamic content
 
-This plugin was designed with static webpages in mind. It currently maintains jQuery/Zepto objects for the views available to it when instantiated. Because of this, it is not particularly well-suited for interfaces that load a large amount of content dynamically. There is [an existing issue for this](https://github.com/cloudfour/SimpleSlideView/issues/7); additional feedback, ideas and pull requests are welcome.
+This plugin was designed with static webpages in mind. It currently maintains jQuery objects for the views available to it when instantiated. Because of this, it is not particularly well-suited for interfaces that load a large amount of content dynamically. There is [an existing issue for this](https://github.com/cloudfour/SimpleSlideView/issues/7); additional feedback, ideas and pull requests are welcome.
 
 ### Animation performance
 
@@ -383,5 +380,3 @@ This repository contains other libraries that may or may not fall under the same
 * [jQuery](https://github.com/jquery/jquery)
 * [jQuery.ScrollTo](https://github.com/flesler/jquery.scrollTo)
 * [Modernizr](https://github.com/Modernizr/Modernizr)
-* [Zepto](https://github.com/madrobby/zepto)
-* [ZeptoScroll](https://github.com/suprMax/ZeptoScroll)
