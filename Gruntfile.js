@@ -12,7 +12,7 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: ['src/simpleslideview.js'],
+        files: ['lib/simpleslideview.js'],
         tasks: ['uglify']
       }
     }
@@ -21,6 +21,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['uglify']);
+  grunt.registerTask('default', ['uglify', 'watch']);
 
 };
