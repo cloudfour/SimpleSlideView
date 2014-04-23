@@ -10,6 +10,12 @@ If [Bower](http://bower.io/)'s your thing, you can install this plugin by runnin
 
 ## History
 
+### 2.0.0
+* Removal of Zepto. SimpleSlideView is now a jQuery-only plugin.
+* Removed coffee as a dependency; source is now JS.
+* Events namespaced.
+* Renamed `data-*` attributes for trigger elements (options are now `data-slideview-change`, `data-slideview-push`, `data-slideview-pop`)
+
 ### 1.1.1
 * Updated Zepto to 1.1.3 with `fx` module included.
 * Improved conditional checks on some `$.fx`-dependent default values.
