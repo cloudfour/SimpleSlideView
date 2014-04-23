@@ -362,13 +362,13 @@ var childSlideView = $('#child').slideView({
 
 ## Building from source
 
-SimpleSlideView is written in [CoffeeScript](http://coffeescript.org/). We've included a [Grunt](http://gruntjs.com/) config file to make it easy to contribute. With [node.js](http://gruntjs.com/) installed, `cd` to the project directory and follow these steps:
+We've included a [Grunt](http://gruntjs.com/) config file to make it easy to contribute. With [node.js](http://nodejs.org/) installed, `cd` to the project directory and follow these steps:
 
 1. Install the Grunt CLI (if you haven't already): `npm install -g grunt-cli`
 1. Install other dependencies: `npm install`
 1. Watch the source file for changes: `grunt`
 
-As you save `simpleslideview.coffee`, the Grunt task will compile and minify automatically. You can stop this by hitting `Ctrl+C`.
+As you save `lib/simpleslideview.js`, the Grunt task will uglify and minify automatically (into `lib/simpleslideview.min.js`). You can stop this by hitting `Ctrl+C`.
 
 ## License
 
