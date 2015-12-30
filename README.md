@@ -10,6 +10,9 @@ If [Bower](http://bower.io/)'s your thing, you can install this plugin by runnin
 
 ## History
 
+### 1.1.2
+* Fixed bug in `changeView` methods when plugin is inactive.
+
 ### 1.1.1
 * Updated Zepto to 1.1.3 with `fx` module included.
 * Improved conditional checks on some `$.fx`-dependent default values.
