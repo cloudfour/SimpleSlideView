@@ -216,6 +216,9 @@ class SimpleSlideView
     return @off()
 
   changeView: (targetView, action) ->
+    # do not continue if the plugin is not currently active
+    return if !@isActive
+
     # do not continue if target view is nonexistent or the same
     # as the currently active view
     $targetView = $ targetView
